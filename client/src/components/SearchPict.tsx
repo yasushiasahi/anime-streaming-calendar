@@ -1,8 +1,9 @@
 import * as React from 'react'
 import styled from 'styled-components'
+import styles from '../helpers/styles'
 
 const SearchPict = () => (
-  <Svg id="layer" viewBox="0 0 40.81 42">
+  <styles.SCs.Svg id="layer" viewBox="0 0 40.81 42">
     <defs>
       <style
         dangerouslySetInnerHTML={{
@@ -14,10 +15,7 @@ const SearchPict = () => (
     <title>search</title>
     <circle className="cls-1" cx="16.84" cy="16.84" r="14.84" />
     <line className="cls-1" x1="28.13" y1="29.31" x2="38.81" y2={40} />
-  </Svg>
+  </styles.SCs.Svg>
 )
 
-const Svg = styled.svg`
-  height: 100%;
-`
 export default SearchPict

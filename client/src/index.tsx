@@ -2,6 +2,7 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import { injectGlobal } from 'styled-components'
 import App from './components/App'
+import styles from './helpers/styles'
 
 const link = document.createElement('link')
 link.setAttribute('href', 'https://fonts.googleapis.com/earlyaccess/notosansjp.css')
@@ -20,6 +21,7 @@ injectGlobal`
   body {
      margin: 0;
      font-size: 14px;
+     color: ${styles.Colors.FontLight};
      text-rendering: geometricPrecision;
      overflow: hidden;
      height: 100%;
