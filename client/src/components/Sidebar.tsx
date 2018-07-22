@@ -35,17 +35,46 @@ const makeCheckBoxs = (ds: CheckBoxDatas[]): JSX.Element[] => {
   return ds.map(d => <CheckBox key={d.id} name={d.name} />)
 }
 
+// class Sidebar extends React.Component<{}, State> {
+//   constructor({ }) {
+//     super({})
+//     this.state = {
+//       isOpens: { Services: true, MyLists: true }
+//     }
+//     this.handleClick = this.handleClick.bind(this)
+//   }
+
+//   handleClick(key: string): void {
+//     const copyIsOpens = Object.assign({}, this.state.isOpens)
+//     copyIsOpens[key] = !copyIsOpens[key]
+//     this.setState({
+//       isOpens: copyIsOpens
+//     })
+//   }
+
+//   render() {
+//     const { isOpens } = this.state
+//     const { handleClick } = this
+
+//     return (
+//       <Container>
+//         <MenuTitle title={'Services'} isOpen={isOpens.Services} handleClick={handleClick} />
+//         <CheckBoxWrappar isOpen={isOpens.Services}>{makeCheckBoxs(SearviseDatas)}</CheckBoxWrappar>
+//         <Divider />
+//         <MenuTitle title={'MyLists'} isOpen={isOpens.MyLists} handleClick={handleClick} />
+//         <CheckBoxWrappar isOpen={isOpens.MyLists}>{makeCheckBoxs(MyListDatas)}</CheckBoxWrappar>
+//       </Container>
+//     )
+//   }
+// }
+
 class Sidebar extends React.Component<{}, State> {
-  constructor() {
-    super(null)
-    this.state = {
-      isOpens: { Services: true, MyLists: true }
-    }
-    this.handleClick = this.handleClick.bind(this)
+  state = {
+    isOpens: { Services: true, MyLists: true }
   }
 
-  handleClick(key: string): void {
-    const copyIsOpens = Object.assign({}, this.state.isOpens)
+  handleClick = (key: string): void => {
+    const copyIsOpens: IsOpens = Object.assign({}, this.state.isOpens)
     copyIsOpens[key] = !copyIsOpens[key]
     this.setState({
       isOpens: copyIsOpens

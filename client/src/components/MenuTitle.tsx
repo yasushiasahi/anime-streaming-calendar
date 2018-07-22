@@ -25,7 +25,7 @@ const Wrapper = styled.div`
   transition: background-color 100ms linear;
 
   &:hover {
-    background-color: #ebebeb;
+    background-color: ${styles.Colors.BGDarkGray};
   }
 
   div {

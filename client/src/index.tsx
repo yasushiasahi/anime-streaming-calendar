@@ -25,13 +25,14 @@ injectGlobal`
   }
 
   body {
-     margin: 0;
-     font-size: 14px;
-     color: ${styles.Colors.FontNormal};
-     text-rendering: geometricPrecision;
-     overflow: hidden;
-     height: 100%;
-     background-color: #fff;
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+
+    font-size: 14px;
+    text-rendering: geometricPrecision;
+    color: ${styles.Colors.FontNormal};
+    background-color: ${styles.Colors.BGWhite};
   }
 
   div {

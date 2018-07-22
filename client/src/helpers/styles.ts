@@ -14,7 +14,10 @@ const Sizes = {
 const Colors = {
   FontDrak: '#212121',
   FontNormal: '#757575',
-  FontLight: '#9e9e9e'
+  FontLight: '#9e9e9e',
+  BGWhite: '#fff',
+  BGGray: 'rgba(0,0,0,0.04)',
+  BGDarkGray: '#ebebeb'
 }
 
 const SCs = {

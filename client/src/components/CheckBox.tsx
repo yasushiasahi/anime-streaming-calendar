@@ -21,7 +21,7 @@ const Wrapper = styled.label`
   transition: background-color 100ms linear;
 
   &:hover {
-    background-color: #ebebeb;
+    background-color: ${styles.Colors.BGGray};
   }
 
   span {

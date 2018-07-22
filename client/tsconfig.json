@@ -3,9 +3,14 @@
     "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": true,
-    "module": "commonjs",
+    "module": "es2015",
+    "moduleResolution": "node",
     "target": "es6",
     "jsx": "react"
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*"],
+  // "typeRoots" : [
+  //    "typings/",
+  //    "node_modules/@types/"
+  // ]
 }
