@@ -6,7 +6,7 @@ interface Props {
   name: string
 }
 
-const CheckBox = ({ name }: Props): JSX.Element => (
+export default ({ name }: Props): JSX.Element => (
   <Wrapper>
     <input type="checkBox" name="" value="" />
     <span>{name}</span>
@@ -29,5 +29,3 @@ const Wrapper = styled.label`
     color: ${styles.Colors.FontDrak};
   }
 `
-
-export default CheckBox

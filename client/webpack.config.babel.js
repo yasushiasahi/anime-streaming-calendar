@@ -6,8 +6,7 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   output: {
-    path: path.join(__dirname, '../dist'),
-    filename: 'bundle.js'
+    path: path.join(__dirname, '../dist')
   },
   module: {
     rules: [
@@ -21,7 +20,7 @@ module.exports = {
         loader: 'source-map-loader'
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
+        test: /\.svg$/,
         use: [
           {
             loader: 'url-loader',
@@ -39,7 +38,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Anime Streaming Calendar',
-      meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' }
+      meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
+      favicon: 'src/favicon.ico'
     }),
     new webpack.NamedModulesPlugin()
   ]

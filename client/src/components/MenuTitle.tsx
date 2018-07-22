@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import styles from '../helpers/styles'
-import UnderPict from './UnderPict'
+import Icon, { IN } from './icon/Icon'
 
 interface Props {
   title: string
@@ -9,11 +9,11 @@ interface Props {
   handleClick: (key: string) => void
 }
 
-const MenuTitle = ({ title, isOpen, handleClick }: Props): JSX.Element => (
+export default ({ title, isOpen, handleClick }: Props): JSX.Element => (
   <Wrapper onClick={() => handleClick(title)}>
     <div>
       <p>{title}</p>
-      <UnderPict isOpen={isOpen} />
+      {isOpen ? <Icon i={IN.Up} /> : <Icon i={IN.Down} />}
     </div>
   </Wrapper>
 )
@@ -37,10 +37,8 @@ const Wrapper = styled.div`
       margin: 0;
     }
 
-    svg {
+    img {
       height: 0.5rem;
     }
   }
 `
-
-export default MenuTitle

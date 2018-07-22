@@ -1,28 +1,24 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import HamburgerPict from './HamburgerPict'
-import SearchPict from './SearchPict'
-import LogoPict from './LogoPict'
+import Icon, { IN } from './icon/Icon'
 import styles from '../helpers/styles'
 
-class Header extends React.Component {
-  render() {
-    return (
-      <FlexWrappar>
-        <LeftFlexContainer>
-          <HamburgerPict />
-          <LogoPict />
-          <span>アニメ ストリーミング カレンダー</span>
-        </LeftFlexContainer>
-        <RightFlexContainer>
-          <SearchPict />
-          <span>？</span>
-          <span>Logout</span>
-        </RightFlexContainer>
-      </FlexWrappar>
-    )
-  }
-}
+export default (): JSX.Element => (
+  <FlexWrappar>
+    <LeftFlexContainer>
+      <div>
+        <Icon i={IN.Menu} />
+      </div>
+      <Icon i={IN.Logo} />
+      <span>アニメ ストリーミング カレンダー</span>
+    </LeftFlexContainer>
+    <RightFlexContainer>
+      <Icon i={IN.Search} />
+      <span>？</span>
+      <span>Logout</span>
+    </RightFlexContainer>
+  </FlexWrappar>
+)
 
 const FlexWrappar = styled.header`
   grid-area: Header;
@@ -42,15 +38,30 @@ const LeftFlexContainer = styled.div`
   justify-content: space-evenly;
   align-items: center;
 
-  span {
-    font-size: 1.4rem;
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    transition: background-color 100ms linear;
+
+    &:hover {
+      background-color: ${styles.Colors.BGDarkGray};
+    }
+
+    img[alt^='Menu'] {
+      height: 0.8rem;
+    }
   }
 
-  svg:nth-of-type(1) {
-    height: 1rem;
+  img[alt^='Logo'] {
+    height: 2rem;
   }
-  svg:nth-of-type(2) {
-    height: 2.2rem;
+
+  span {
+    font-size: 1.4rem;
   }
 `
 
@@ -64,9 +75,7 @@ const RightFlexContainer = styled.div`
     font-size: 1.5rem;
   }
 
-  svg:nth-of-type(1) {
-    height: 1.3rem;
+  img {
+    height: 1.2rem;
   }
 `
-
-export default Header
