@@ -13,7 +13,8 @@ const Sizes = {
 
 const Colors = {
   FontDrak: '#212121',
-  FontLight: '#757575'
+  FontNormal: '#757575',
+  FontLight: '#9e9e9e'
 }
 
 const SCs = {

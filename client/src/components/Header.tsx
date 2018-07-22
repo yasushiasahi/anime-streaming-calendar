@@ -12,7 +12,7 @@ class Header extends React.Component {
         <LeftFlexContainer>
           <HamburgerPict />
           <LogoPict />
-          <span>ANIME STREAMING CALENDAR</span>
+          <span>アニメ ストリーミング カレンダー</span>
         </LeftFlexContainer>
         <RightFlexContainer>
           <SearchPict />
@@ -32,11 +32,12 @@ const FlexWrappar = styled.header`
   box-sizing: border-box;
   padding: 8px;
 
+  color: ${styles.Colors.FontLight};
   ${styles.Props.Border('bottom')};
 `
 
 const LeftFlexContainer = styled.div`
-  min-width: 450px;
+  min-width: 480px;
   display: flex;
   justify-content: space-evenly;
   align-items: center;

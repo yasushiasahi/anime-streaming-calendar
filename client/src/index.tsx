@@ -4,13 +4,19 @@ import { injectGlobal } from 'styled-components'
 import App from './components/App'
 import styles from './helpers/styles'
 
-const link = document.createElement('link')
-link.setAttribute('href', 'https://fonts.googleapis.com/earlyaccess/notosansjp.css')
-link.setAttribute('rel', 'stylesheet')
-document.head.appendChild(link)
+const notoLink = document.createElement('link')
+notoLink.setAttribute('href', 'https://fonts.googleapis.com/earlyaccess/notosansjp.css')
+notoLink.setAttribute('rel', 'stylesheet')
+document.head.appendChild(notoLink)
+
+const robotoLink = document.createElement('link')
+notoLink.setAttribute('href', 'https://fonts.googleapis.com/css?family=Roboto')
+notoLink.setAttribute('rel', 'stylesheet')
+document.head.appendChild(robotoLink)
 
 const root = document.createElement('div')
 document.body.insertBefore(root, document.body.firstChild)
+
 render(<App />, root)
 
 injectGlobal`
@@ -21,7 +27,7 @@ injectGlobal`
   body {
      margin: 0;
      font-size: 14px;
-     color: ${styles.Colors.FontLight};
+     color: ${styles.Colors.FontNormal};
      text-rendering: geometricPrecision;
      overflow: hidden;
      height: 100%;
