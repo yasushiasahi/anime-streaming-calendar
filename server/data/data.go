@@ -18,8 +18,4 @@ func InitDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	if err := Db.Ping(); err != nil {
-		log.Fatal(err)
-	}
 }

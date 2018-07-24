@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	data.InitDB()
 
 	server := http.Server{
@@ -19,6 +18,5 @@ func main() {
 	http.HandleFunc("/api/", showReqestPath(handleAPI))
 
 	fmt.Println("server lisning at localhost:3000")
-
 	server.ListenAndServe()
 }
