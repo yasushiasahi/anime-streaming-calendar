@@ -1,19 +1,19 @@
-import * as React from 'react'
-import styled from 'styled-components'
-import MenuTitle from './MenuTitle'
-import CheckBox from './CheckBox'
-import styles from '../helpers/styles'
-import { log } from 'util'
+import * as React from "react"
+import styled from "styled-components"
+import { log } from "util"
+import styles from "../helpers/styles"
+import CheckBox from "./CheckBox"
+import MenuTitle from "./MenuTitle"
 
 const SearviseDatas = [
-  { id: 1, name: 'Netflix' },
-  { id: 2, name: 'Amazonプライム' },
-  { id: 3, name: 'ｄアニメストア' }
+  { id: 1, name: "Netflix" },
+  { id: 2, name: "Amazonプライム" },
+  { id: 3, name: "ｄアニメストア" },
 ]
 const MyListDatas = [
-  { id: 1, name: '2018冬' },
-  { id: 2, name: '2018春' },
-  { id: 3, name: '2018夏' }
+  { id: 1, name: "2018冬" },
+  { id: 2, name: "2018春" },
+  { id: 3, name: "2018夏" },
 ]
 
 interface IsOpens {
@@ -32,32 +32,32 @@ interface CheckBoxDatas {
 }
 
 const makeCheckBoxs = (ds: CheckBoxDatas[]): JSX.Element[] => {
-  return ds.map(d => <CheckBox key={d.id} name={d.name} />)
+  return ds.map((d) => <CheckBox key={d.id} name={d.name} />)
 }
 
 export default class Sidebar extends React.Component<{}, State> {
-  state = {
-    isOpens: { Services: true, MyLists: true }
+  public state = {
+    isOpens: { Services: true, MyLists: true },
   }
 
-  handleClick = (key: string): void => {
+  public handleClick = (key: string): void => {
     const copyIsOpens: IsOpens = Object.assign({}, this.state.isOpens)
     copyIsOpens[key] = !copyIsOpens[key]
     this.setState({
-      isOpens: copyIsOpens
+      isOpens: copyIsOpens,
     })
   }
 
-  render() {
+  public render() {
     const { isOpens } = this.state
     const { handleClick } = this
 
     return (
       <Container>
-        <MenuTitle title={'Services'} isOpen={isOpens.Services} handleClick={handleClick} />
+        <MenuTitle title={"Services"} isOpen={isOpens.Services} handleClick={handleClick} />
         <CheckBoxWrappar isOpen={isOpens.Services}>{makeCheckBoxs(SearviseDatas)}</CheckBoxWrappar>
         <Divider />
-        <MenuTitle title={'MyLists'} isOpen={isOpens.MyLists} handleClick={handleClick} />
+        <MenuTitle title={"MyLists"} isOpen={isOpens.MyLists} handleClick={handleClick} />
         <CheckBoxWrappar isOpen={isOpens.MyLists}>{makeCheckBoxs(MyListDatas)}</CheckBoxWrappar>
       </Container>
     )
@@ -68,13 +68,13 @@ const Container = styled.aside`
   grid-area: Sidebar;
   box-sizing: border-box;
   min-height: calc(100vh - ${styles.Sizes.HeaderHeight});
-  ${styles.Props.Border('right')};
+  ${styles.Props.Border("right")};
 `
 
 const Divider = styled.div`
   height: 0;
   margin: 8px 0;
-  ${styles.Props.Border('bottom')};
+  ${styles.Props.Border("bottom")};
 `
 
 interface CBWProps {
@@ -82,5 +82,5 @@ interface CBWProps {
 }
 
 const CheckBoxWrappar = styled.div<CBWProps>`
-  display: ${p => (p.isOpen ? 'block' : 'none')};
+  display: ${(p) => (p.isOpen ? "block" : "none")};
 `

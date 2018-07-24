@@ -1,14 +1,14 @@
-import * as React from 'react'
-import styled from 'styled-components'
+import * as React from "react"
+import styled from "styled-components"
 const icons = [
-  require('./logo.svg'),
-  require('./menu.svg'),
-  require('./search.svg'),
-  require('./up.svg'),
-  require('./down.svg'),
-  require('./netflix.svg'),
-  require('./amazon.svg'),
-  require('./danime.svg')
+  require("./logo.svg"),
+  require("./menu.svg"),
+  require("./search.svg"),
+  require("./up.svg"),
+  require("./down.svg"),
+  require("./netflix.svg"),
+  require("./amazon.svg"),
+  require("./danime.svg"),
 ]
 
 export enum IN {
@@ -19,7 +19,7 @@ export enum IN {
   Down,
   Netflix,
   Amazon,
-  Danime
+  Danime,
 }
 
 interface IconProps {

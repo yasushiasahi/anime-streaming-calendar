@@ -9,3 +9,5 @@ node_modules
 GPATH
 GRTAGS
 GTAGS
+
+server/server

@@ -1,7 +1,7 @@
-import * as React from 'react'
-import styled from 'styled-components'
-import Icon, { IN } from './icon/Icon'
-import styles from '../helpers/styles'
+import * as React from "react"
+import styled from "styled-components"
+import styles from "../helpers/styles"
+import Icon, { IN } from "./icon/Icon"
 
 export default (): JSX.Element => (
   <FlexWrappar>
@@ -29,7 +29,7 @@ const FlexWrappar = styled.header`
   padding: 8px;
 
   color: ${styles.Colors.FontLight};
-  ${styles.Props.Border('bottom')};
+  ${styles.Props.Border("bottom")};
 `
 
 const LeftFlexContainer = styled.div`

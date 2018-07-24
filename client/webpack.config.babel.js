@@ -12,12 +12,25 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
+        enforce: 'pre',
+        use: [
+          {
+            loader: 'tslint-loader'
+          }
+        ]
+      },
+      {
+        test: /\.tsx?$/,
         use: ['awesome-typescript-loader', 'stylelint-custom-processor-loader']
       },
       {
         enforce: 'pre',
         test: /\.js$/,
-        loader: 'source-map-loader'
+        use: [
+          {
+            loader: 'source-map-loader'
+          }
+        ]
       },
       {
         test: /\.svg$/,
@@ -37,7 +50,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Anime Streaming Calendar',
+      title: 'アニメ ストリーミング カレンダー',
       meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
       favicon: 'src/favicon.ico'
     }),

@@ -1,8 +1,8 @@
-import * as React from 'react'
-import styled from 'styled-components'
-import WeekOfDay from './WeekOfDay'
-import styles from '../helpers/styles'
-import { log } from 'util'
+import * as React from "react"
+import styled from "styled-components"
+import { log } from "util"
+import styles from "../helpers/styles"
+import WeekOfDay from "./WeekOfDay"
 
 const getMonthLength = (month: number): number => {
   if (month === 2) {
@@ -37,9 +37,9 @@ const getWeek = (): number[] => {
   /*
    * 配列に0が含まれている(前月と今月をまたいでいる)場合
    */
-  idx = week.findIndex(n => n === 0)
+  idx = week.findIndex((n) => n === 0)
   if (idx !== -1) {
-    let newWeek: number[] = []
+    const newWeek: number[] = []
     for (let i = 0; i < idx + 1; i++) {
       newWeek.push(getMonthLength(month - 1) - i)
     }
@@ -49,9 +49,9 @@ const getWeek = (): number[] => {
   /*
    * 配列に当月の日数+1が含まれている(今月と来月をまたいでいる)場合
    */
-  idx = week.findIndex(n => n === getMonthLength(month) + 1)
+  idx = week.findIndex((n) => n === getMonthLength(month) + 1)
   if (idx !== -1) {
-    let newWeek: number[] = []
+    const newWeek: number[] = []
     for (let i = 1; i < 8 - idx; i++) {
       newWeek.push(i)
     }
@@ -63,7 +63,7 @@ const getWeek = (): number[] => {
 }
 
 const weekOfDays = getWeek().map((d, i) => (
-  <WeekOfDay key={d} dayNum={d} dayStr={['月', '火', '水', '木', '金', '土', '日'][i]} />
+  <WeekOfDay key={d} dayNum={d} dayStr={["月", "火", "水", "木", "金", "土", "日"][i]} />
 ))
 
 const Calendar = (): JSX.Element => (
@@ -80,7 +80,7 @@ const GridContainer = styled.div`
 `
 
 const Divider = styled.div`
-  ${styles.Props.Border('right')};
+  ${styles.Props.Border("right")};
 `
 
 export default Calendar

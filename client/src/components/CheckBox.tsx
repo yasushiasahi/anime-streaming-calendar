@@ -1,6 +1,6 @@
-import * as React from 'react'
-import styled from 'styled-components'
-import styles from '../helpers/styles'
+import * as React from "react"
+import styled from "styled-components"
+import styles from "../helpers/styles"
 
 interface Props {
   name: string

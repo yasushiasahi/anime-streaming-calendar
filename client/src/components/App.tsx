@@ -1,10 +1,10 @@
-import * as React from 'react'
-import styled from 'styled-components'
-import { hot } from 'react-hot-loader'
-import Header from './Header'
-import Sidebar from './Sidebar'
-import Calendar from './Calendar'
-import styles from '../helpers/styles'
+import * as React from "react"
+import { hot } from "react-hot-loader"
+import styled from "styled-components"
+import styles from "../helpers/styles"
+import Calendar from "./Calendar"
+import Header from "./Header"
+import Sidebar from "./Sidebar"
 
 const App = (): JSX.Element => (
   <GridContainer>
