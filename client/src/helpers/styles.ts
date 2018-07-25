@@ -18,12 +18,25 @@ const Colors = {
   BGWhite: "#fff",
   BGGray: "rgba(0,0,0,0.04)",
   BGDarkGray: "#ebebeb",
+  Blue: "#3367d6",
 }
 
-const SCs = {
-  Svg: styled.svg`
-    height: 100%;
+interface BP {
+  blue?: any
+}
+
+const SC = {
+  Button: styled.span<BP>`
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    background-color: ;
+    border: 1px solid #c6c6c6;
+    background-color: ${p => (p.blue ? Colors.Blue : "#f8f8f8")};
+    color: ${p => (p.blue ? Colors.BGWhite : Colors.FontNormal)};
   `,
 }
+//text-align: center;
 
-export default { Props, Sizes, Colors, SCs }
+export default { Props, Sizes, Colors, SC }

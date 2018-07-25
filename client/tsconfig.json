@@ -9,8 +9,8 @@
     "jsx": "react"
   },
   "include": ["./src/**/*"],
-  // "typeRoots" : [
-  //    "typings/",
-  //    "node_modules/@types/"
-  // ]
+  "typeRoots" : [
+     "typings/",
+     "node_modules/@types/"
+  ]
 }

@@ -2,18 +2,18 @@ import * as React from "react"
 import styled from "styled-components"
 import { log } from "util"
 import styles from "../helpers/styles"
-import Icon, { IN } from "./icon/Icon"
+import Icon, { I } from "./icon/Icon"
 const schedules: Schedule[] = [
-  { id: 1, name: "プラネット ウィズ", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 2, name: "あそびあそばせ", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 3, name: "邪神ちゃんドロップキック", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 4, name: "オーバーロードⅢ", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 5, name: "BANANA FISH", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 6, name: "バキ", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 7, name: "三星のスバル", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 8, name: "異世界魔王と召喚少女の奴隷魔術", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 9, name: "はねバド", service: [IN.Netflix, IN.Amazon, IN.Danime] },
-  { id: 10, name: "ちおちゃんの通学路", service: [IN.Netflix, IN.Amazon, IN.Danime] },
+  { id: 1, name: "プラネット ウィズ", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 2, name: "あそびあそばせ", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 3, name: "邪神ちゃんドロップキック", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 4, name: "オーバーロードⅢ", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 5, name: "BANANA FISH", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 6, name: "バキ", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 7, name: "三星のスバル", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 8, name: "異世界魔王と召喚少女の奴隷魔術", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 9, name: "はねバド", service: [I.Netflix, I.Amazon, I.Danime] },
+  { id: 10, name: "ちおちゃんの通学路", service: [I.Netflix, I.Amazon, I.Danime] },
 ]
 
 interface Schedule {
@@ -33,10 +33,10 @@ interface WProps {
 
 const getIsToday = (date: number): boolean => new Date().getDate() === date
 
-const makeIcons = (ss: number[]): JSX.Element[] => ss.map((s) => <Icon key={s} i={s} />)
+const makeIcons = (ss: number[]): JSX.Element[] => ss.map(s => <Icon key={s} i={s} />)
 
 const makeScheduleBoxs = (ss: Schedule[]): JSX.Element[] =>
-  ss.map((s) => (
+  ss.map(s => (
     <ScheduleBox key={s.id}>
       <span>{s.name}</span>
       <div>{makeIcons(s.service)}</div>
@@ -56,7 +56,7 @@ export default ({ dayStr, dayNum }: WODProps) => (
 
 const Wrapper = styled.div<WProps>`
   ${styles.Props.Border("right")};
-  background-color: ${(p) => (p.isToday ? styles.Colors.BGGray : "transparent")};
+  background-color: ${p => (p.isToday ? styles.Colors.BGGray : "transparent")};
 `
 
 const DayWrapper = styled.div`

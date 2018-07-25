@@ -1,7 +1,7 @@
 import * as React from "react"
 import styled from "styled-components"
 import styles from "../helpers/styles"
-import Icon, { IN } from "./icon/Icon"
+import Icon, { I } from "./icon/Icon"
 
 interface Props {
   title: string
@@ -13,7 +13,7 @@ export default ({ title, isOpen, handleClick }: Props): JSX.Element => (
   <Wrapper onClick={() => handleClick(title)}>
     <div>
       <p>{title}</p>
-      {isOpen ? <Icon i={IN.Up} /> : <Icon i={IN.Down} />}
+      {isOpen ? <Icon i={I.Up} /> : <Icon i={I.Down} />}
     </div>
   </Wrapper>
 )
