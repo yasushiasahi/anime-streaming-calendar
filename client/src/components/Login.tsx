@@ -1,12 +1,25 @@
 import * as React from "react"
+import axios from "axios"
 import styled from "styled-components"
 import styles from "../helpers/styles"
 import Icon, { I } from "./icon/Icon"
+import { log } from "util"
 
 interface LProps {
   name: string
   pass: string
   HandleInputsChange: (e: React.FormEvent) => void
+}
+
+const axiosAPI = async () => {
+  const res: any = await axios
+    .post("api/createUser", {
+      name: "asahi",
+      password: "yasushi",
+      token: "hogehoge",
+    })
+    .catch(err => console.log(err))
+  console.log(res)
 }
 
 export default ({ name, pass, HandleInputsChange }: LProps) => (
@@ -30,7 +43,7 @@ export default ({ name, pass, HandleInputsChange }: LProps) => (
       </Input>
     </FromWrapper>
     <ButtonWrapper>
-      <styles.SC.Button>アカウントを作成</styles.SC.Button>
+      <styles.SC.Button onClick={() => axiosAPI()}>アカウントを作成</styles.SC.Button>
       <styles.SC.Button>ログイン</styles.SC.Button>
     </ButtonWrapper>
   </GridContainer>
@@ -113,7 +126,7 @@ const ButtonWrapper = styled.div`
 
   background-color: ${styles.Colors.BGDarkGray};
 
-span{
-  padding:3px 15px;
-}
+  span {
+    padding: 3px 15px;
+  }
 `
