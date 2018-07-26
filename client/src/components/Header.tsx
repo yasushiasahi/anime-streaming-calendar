@@ -1,9 +1,18 @@
 import * as React from "react"
 import styled from "styled-components"
-import styles from "../helpers/styles"
+
+import styles from "../util/style"
+import { api, ApiResponse } from "../util/axios"
+import { Consumer, Contxet } from "./App"
+import User, { newUser } from "../util/type/user"
+import { isValid } from "./helper"
+
 import Login from "./Login"
 import Signin from "./Signin"
 import Icon, { I } from "./icon/Icon"
+import InputText from "./InputText"
+import { checkServerIdentity } from "tls"
+import { log } from "util"
 
 interface HState {
   inputText: InputText
@@ -16,38 +25,80 @@ interface IsShown {
   [key: string]: boolean
 }
 
-interface InputText {
+export interface InputText {
   name: string
   pass: string
+  passRe: string
   [key: string]: string
 }
 
 export default class extends React.Component<{}, HState, JSX.Element> {
   state = {
-    inputText: { name: "", pass: "" },
+    inputText: { name: "", pass: "", passRe: "" },
     isShown: { login: false, signin: false },
   }
 
-  HandleShown = (key: string) => {
-    let copyIsShown: IsShown = Object.assign({}, this.state.isShown)
+  handleClick = (key: string): void => {
+    const copyIsShown: IsShown = Object.assign({}, this.state.isShown)
     copyIsShown[key] = !copyIsShown[key]
     this.setState({ isShown: copyIsShown })
   }
 
-  HandleInputsChange = (e: React.FormEvent<HTMLInputElement>) => {
-    let copyInputText: InputText = Object.assign({}, this.state.inputText)
+  handleChange = (e: React.FormEvent<HTMLInputElement>): void => {
+    const copyInputText: InputText = Object.assign({}, this.state.inputText)
     copyInputText[e.currentTarget.name] = e.currentTarget.value
     this.setState({ inputText: copyInputText })
   }
 
+  signin = async (): Promise<any> => {
+    const t: InputText = this.state.inputText
+    if (isValid(t).length !== 0) {
+      // TODO 再入力を促す
+      console.log(isValid(t))
+      return
+    }
+
+    const u: User = newUser({ name: t.name, password: t.pass })
+    const { status, body }: ApiResponse = await api("createUser", u)
+    if (!status) {
+      // TODO エラーメッセージを返す
+      console.log("サーバーとの通信に失敗しました。時間をおいて再度サインインして下さい。")
+      return
+    }
+
+    if (!body.OK) {
+      // TODO エラーメッセージを返す
+      console.log(body.Query)
+      return
+    }
+
+    this.setState({
+      inputText: { name: "", pass: "", passRe: "" },
+      isShown: { login: false, signin: false },
+    })
+    console.log(body.Query)
+  }
+
   render() {
     const { inputText, isShown } = this.state
-    const { HandleShown, HandleInputsChange } = this
+    const { handleClick, handleChange, signin } = this
     const loginDom = (
-      <Login name={inputText.name} pass={inputText.pass} HandleInputsChange={HandleInputsChange} />
+      <Login
+        name={inputText.name}
+        pass={inputText.pass}
+        handleChange={handleChange}
+        handleClick={handleClick}
+      />
     )
     const signinDom = (
-      <Signin name={inputText.name} pass={inputText.pass} HandleInputsChange={HandleInputsChange} />
+      <Signin
+        name={inputText.name}
+        pass={inputText.pass}
+        passRe={inputText.passRe}
+        handleChange={handleChange}
+        handleClick={handleClick}
+        signin={signin}
+      />
     )
 
     return (
@@ -62,7 +113,7 @@ export default class extends React.Component<{}, HState, JSX.Element> {
         <RightFlexContainer>
           <Icon i={I.Search} />
           <span>？</span>
-          <Hover onClick={() => HandleShown("login")}>
+          <Hover onClick={() => handleClick("login")}>
             <Icon i={I.Login} />
           </Hover>
         </RightFlexContainer>
@@ -75,7 +126,7 @@ export default class extends React.Component<{}, HState, JSX.Element> {
 
 const FlexWrappar = styled.header`
   grid-area: Header;
-  height: ${styles.Sizes.HeaderHeight};
+  height: ${styles.Size.HeaderHeight};
   display: flex;
   justify-content: space-between;
   box-sizing: border-box;
@@ -83,7 +134,7 @@ const FlexWrappar = styled.header`
 
   position: relative;
 
-  color: ${styles.Colors.FontLight};
+  color: ${styles.Color.FontLight};
   ${styles.Props.Border("bottom")};
 `
 
@@ -128,7 +179,7 @@ const Hover = styled.div`
   transition: background-color 100ms linear;
 
   &:hover {
-    background-color: ${styles.Colors.BGDarkGray};
+    background-color: ${styles.Color.BGDarkGray};
   }
 
   img[alt^="Menu"] {

@@ -1,28 +1,17 @@
 import * as React from "react"
-import axios from "axios"
 import styled from "styled-components"
-import styles from "../helpers/styles"
+import styles from "../util/style"
 import Icon, { I } from "./icon/Icon"
 import { log } from "util"
 
 interface LProps {
   name: string
   pass: string
-  HandleInputsChange: (e: React.FormEvent) => void
+  handleChange: (e: React.FormEvent) => void
+  handleClick: (key: string) => void
 }
 
-const axiosAPI = async () => {
-  const res: any = await axios
-    .post("api/createUser", {
-      name: "asahi",
-      password: "yasushi",
-      token: "hogehoge",
-    })
-    .catch(err => console.log(err))
-  console.log(res)
-}
-
-export default ({ name, pass, HandleInputsChange }: LProps) => (
+export default ({ name, pass, handleChange, handleClick }: LProps) => (
   <GridContainer>
     <IconWrapper>
       <div>ログイン</div>
@@ -32,18 +21,18 @@ export default ({ name, pass, HandleInputsChange }: LProps) => (
       <Input>
         <label>ユーザー名</label>
         <br />
-        <input type="text" name="name" value={name} onChange={e => HandleInputsChange(e)} />
+        <input type="text" name="name" value={name} onChange={(e) => handleChange(e)} />
         <div />
       </Input>
       <Input>
         <label>パスワード</label>
         <br />
-        <input type="text" name="pass" value={pass} onChange={e => HandleInputsChange(e)} />
+        <input type="text" name="pass" value={pass} onChange={(e) => handleChange(e)} />
         <div />
       </Input>
     </FromWrapper>
     <ButtonWrapper>
-      <styles.SC.Button onClick={() => axiosAPI()}>アカウントを作成</styles.SC.Button>
+      <styles.SC.Button onClick={() => handleClick("signin")}>アカウントを作成</styles.SC.Button>
       <styles.SC.Button>ログイン</styles.SC.Button>
     </ButtonWrapper>
   </GridContainer>
@@ -64,7 +53,7 @@ const GridContainer = styled.div`
   right: 8px;
   top: 62px;
 
-  background-color: ${styles.Colors.BGWhite};
+  background-color: ${styles.Color.BGWhite};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   border: 1px solid #ccc;
 `
@@ -114,7 +103,7 @@ const Input = styled.div`
 
   div {
     height: 2px;
-    background-color: ${styles.Colors.BGDarkGray};
+    background-color: ${styles.Color.BGDarkGray};
   }
 `
 
@@ -124,7 +113,7 @@ const ButtonWrapper = styled.div`
   justify-content: space-around;
   align-items: center;
 
-  background-color: ${styles.Colors.BGDarkGray};
+  background-color: ${styles.Color.BGDarkGray};
 
   span {
     padding: 3px 15px;

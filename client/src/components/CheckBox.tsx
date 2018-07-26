@@ -1,6 +1,6 @@
 import * as React from "react"
 import styled from "styled-components"
-import styles from "../helpers/styles"
+import styles from "../util/style"
 
 interface Props {
   name: string
@@ -21,11 +21,11 @@ const Wrapper = styled.label`
   transition: background-color 100ms linear;
 
   &:hover {
-    background-color: ${styles.Colors.BGGray};
+    background-color: ${styles.Color.BGGray};
   }
 
   span {
     padding-left: 20px;
-    color: ${styles.Colors.FontDrak};
+    color: ${styles.Color.FontDrak};
   }
 `

@@ -1,7 +1,7 @@
 import * as React from "react"
 import styled from "styled-components"
 import { log } from "util"
-import styles from "../helpers/styles"
+import styles from "../util/style"
 import WeekOfDay from "./WeekOfDay"
 
 const getMonthLength = (month: number): number => {

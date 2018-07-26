@@ -6,12 +6,12 @@ const Props = {
   },
 }
 
-const Sizes = {
+const Size = {
   HeaderHeight: "64px",
   SidebarWidth: "256px",
 }
 
-const Colors = {
+const Color = {
   FontDrak: "#212121",
   FontNormal: "#757575",
   FontLight: "#9e9e9e",
@@ -33,10 +33,9 @@ const SC = {
     border-radius: 2px;
     background-color: ;
     border: 1px solid #c6c6c6;
-    background-color: ${p => (p.blue ? Colors.Blue : "#f8f8f8")};
-    color: ${p => (p.blue ? Colors.BGWhite : Colors.FontNormal)};
+    background-color: ${(p) => (p.blue ? Color.Blue : "#f8f8f8")};
+    color: ${(p) => (p.blue ? Color.BGWhite : Color.FontNormal)};
   `,
 }
-//text-align: center;
 
-export default { Props, Sizes, Colors, SC }
+export default { Props, Size, Color, SC }

@@ -2,7 +2,7 @@ import * as React from "react"
 import { render } from "react-dom"
 import { injectGlobal } from "styled-components"
 import App from "./components/App"
-import styles from "./helpers/styles"
+import style from "./util/style"
 
 const notoLink = document.createElement("link")
 notoLink.setAttribute("href", "https://fonts.googleapis.com/earlyaccess/notosansjp.css")
@@ -31,8 +31,8 @@ injectGlobal`
 
     font-size: 14px;
     text-rendering: geometricPrecision;
-    color: ${styles.Colors.FontNormal};
-    background-color: ${styles.Colors.BGWhite};
+    color: ${style.Color.FontNormal};
+    background-color: ${style.Color.BGWhite};
   }
 
   div {

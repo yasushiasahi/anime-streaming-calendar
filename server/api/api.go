@@ -9,32 +9,57 @@ import (
 )
 
 // Handle is functions set which handle apis
-var Handle = map[string]func(*http.Request) string{
-	"createUser": createUser,
-	"getUser":    getUser,
-	"updateUser": updateUser,
-	"deleteUser": deleteUser,
-	"getUsers":   getUsers,
+var Handle = map[string]func(http.ResponseWriter, *http.Request){
+	"createUser":   createUser,
+	"checkSession": checkSession,
+	// "updateUser": updateUser,
+	// "deleteUser": deleteUser,
+	// "getUsers":   getUsers,
 }
 
-func createUser(r *http.Request) string {
+func createUser(w http.ResponseWriter, r *http.Request) {
+	var u data.User
+	if err := decodeBody(r, &u); err != nil {
+		errorRespons(w, "送信データの読み込みに失敗しました"+err.Error())
+		return
+	}
 
-	b := readBody(r)
-	fmt.Println(b)
+	if err := u.Create(); err != nil {
+		errorRespons(w, "データの作成に失敗しました"+err.Error())
+		return
+	}
 
-	// u := data.User{
-	// 	Name:     "なまえ",
-	// 	Password: "パスワード",
-	// 	Token:    "トークン",
-	// }
-	// fmt.Println(u)
-	// err := u.Create()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// 	return "失敗"
-	// }
-	// fmt.Println(u)
-	return "ユーザーを作成しました"
+	u.SetCookie(w)
+	u.Password = ""
+	singleResponse(w, &u)
+}
+
+func checkSession(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("_cookie")
+	if err != nil {
+		errorRespons(w, "クッキーはありません")
+		return
+	}
+
+	fmt.Println(r.Header["Cookie"])
+	fmt.Println(c.Value)
+
+	u := data.User{Token: c.Value}
+
+	if err = u.GetByToken(); err != nil {
+		errorRespons(w, "クッキーに一致するユーザーがいません")
+		return
+	}
+
+	u.SetToken()
+	if err = u.Update(); err != nil {
+		errorRespons(w, "トークンの更新に失敗しました")
+		return
+	}
+
+	u.SetCookie(w)
+	u.Password = ""
+	singleResponse(w, &u)
 }
 
 func getUser(r *http.Request) string {

@@ -54,5 +54,6 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, api.Handle[rp](r))
+	api.Handle[rp](w, r)
+
 }

@@ -18,15 +18,15 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.tsx?$/,
-        enforce: "pre",
-        use: [
-          {
-            loader: "tslint-loader",
-          },
-        ],
-      },
+      // {
+      //   test: /\.tsx?$/,
+      //   enforce: "pre",
+      //   use: [
+      //     {
+      //       loader: "tslint-loader",
+      //     },
+      //   ],
+      // },
       {
         test: /\.tsx?$/,
         use: ["awesome-typescript-loader", "stylelint-custom-processor-loader"],

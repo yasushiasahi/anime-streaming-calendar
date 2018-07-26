@@ -1,16 +1,19 @@
 import * as React from "react"
 import styled from "styled-components"
-import styles from "../helpers/styles"
+import styles from "../util/style"
 import InputText from "./InputText"
 import Icon, { I } from "./icon/Icon"
 
 interface LProps {
   name: string
   pass: string
-  HandleInputsChange: (e: React.FormEvent) => void
+  passRe: string
+  handleChange: (e: React.FormEvent) => void
+  handleClick: (key: string) => void
+  signin: () => Promise<any>
 }
 
-export default ({ name, pass, HandleInputsChange }: LProps) => (
+export default ({ name, pass, passRe, handleChange, handleClick, signin }: LProps) => (
   <Wrapper>
     <GridContainer>
       <TitleWrapper>
@@ -19,12 +22,7 @@ export default ({ name, pass, HandleInputsChange }: LProps) => (
       </TitleWrapper>
       <FormWrapper>
         <div>
-          <InputText
-            label={"ユーザー名"}
-            name={"name"}
-            value={name}
-            handleChange={HandleInputsChange}
-          />
+          <InputText label={"ユーザー名"} name={"name"} value={name} handleChange={handleChange} />
           <p>３文字以上で入力して下さい</p>
         </div>
         <div>
@@ -34,23 +32,25 @@ export default ({ name, pass, HandleInputsChange }: LProps) => (
               type={"password"}
               name={"pass"}
               value={pass}
-              handleChange={HandleInputsChange}
+              handleChange={handleChange}
             />
             <Divider />
             <InputText
               label={"パスワードの確認"}
               type={"password"}
-              name={"pass"}
-              value={pass}
-              handleChange={HandleInputsChange}
+              name={"passRe"}
+              value={passRe}
+              handleChange={handleChange}
             />
           </PassWrapper>
           <p>半角英字、数字、記号を組み合わせて４文字以上で入力してください</p>{" "}
         </div>
       </FormWrapper>
       <ButtonWrapper>
-        <p>キャンセル</p>
-        <styles.SC.Button blue>アカウントを作成</styles.SC.Button>
+        <p onClick={() => handleClick("signin")}>キャンセル</p>
+        <styles.SC.Button blue onClick={signin}>
+          アカウントを作成
+        </styles.SC.Button>
       </ButtonWrapper>
       <Agreement>
         <div>
@@ -78,7 +78,7 @@ const Wrapper = styled.div`
   top: 0px;
   left: 0px;
 
-  background-color: ${styles.Colors.BGWhite};
+  background-color: ${styles.Color.BGWhite};
 `
 
 const GridContainer = styled.div`
@@ -108,7 +108,7 @@ const TitleWrapper = styled.div`
   }
 
   div {
-    color: ${styles.Colors.FontDrak};
+    color: ${styles.Color.FontDrak};
     padding-right: 5px;
     font-size: 1.5rem;
   }
@@ -123,13 +123,13 @@ const FormWrapper = styled.div`
 
   label {
     font-size: 0.9rem;
-    color: ${styles.Colors.FontNormal};
+    color: ${styles.Color.FontNormal};
   }
 
   p {
     margin: 10px 0;
     font-size: 0.75rem;
-    color: ${styles.Colors.FontDrak};
+    color: ${styles.Color.FontDrak};
   }
 `
 
@@ -147,10 +147,10 @@ const ButtonWrapper = styled.div`
   align-items: center;
 
   p {
-    color: ${styles.Colors.Blue};
+    color: ${styles.Color.Blue};
   }
   span {
-    padding:5px 30px;
+    padding: 5px 30px;
   }
 `
 
@@ -160,7 +160,7 @@ const Agreement = styled.div`
   flex-direction: column;
   justify-content: space-around;
   padding: 50px 0 50px 50px;
-  color: ${styles.Colors.FontDrak};
+  color: ${styles.Color.FontDrak};
 
   div {
     display: flex;

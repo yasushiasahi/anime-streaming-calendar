@@ -1,6 +1,6 @@
 import * as React from "react"
 import styled from "styled-components"
-import styles from "../helpers/styles"
+import styles from "../util/style"
 
 interface ITProps {
   label: string
@@ -14,7 +14,7 @@ export default ({ label, type = "text", name, value, handleChange }: ITProps) =>
   <Wrapper>
     <label>{label}</label>
     <br />
-    <input type={type} name={name} value={value} onChange={e => handleChange(e)} />
+    <input type={type} name={name} value={value} onChange={(e) => handleChange(e)} />
     <div />
   </Wrapper>
 )
@@ -25,13 +25,13 @@ const Wrapper = styled.div`
   input {
     border: none;
     width: 100%;
-    font-size:1rem;
+    font-size: 1rem;
     line-height: 1.5rem;
   }
 
   div {
     width: 100%;
     height: 2px;
-    background-color: ${styles.Colors.BGDarkGray};
+    background-color: ${styles.Color.BGDarkGray};
   }
 `

@@ -1,7 +1,7 @@
 import * as React from "react"
 import styled from "styled-components"
 import { log } from "util"
-import styles from "../helpers/styles"
+import style from "../util/style"
 import Icon, { I } from "./icon/Icon"
 const schedules: Schedule[] = [
   { id: 1, name: "プラネット ウィズ", service: [I.Netflix, I.Amazon, I.Danime] },
@@ -33,10 +33,10 @@ interface WProps {
 
 const getIsToday = (date: number): boolean => new Date().getDate() === date
 
-const makeIcons = (ss: number[]): JSX.Element[] => ss.map(s => <Icon key={s} i={s} />)
+const makeIcons = (ss: number[]): JSX.Element[] => ss.map((s) => <Icon key={s} i={s} />)
 
 const makeScheduleBoxs = (ss: Schedule[]): JSX.Element[] =>
-  ss.map(s => (
+  ss.map((s) => (
     <ScheduleBox key={s.id}>
       <span>{s.name}</span>
       <div>{makeIcons(s.service)}</div>
@@ -55,16 +55,16 @@ export default ({ dayStr, dayNum }: WODProps) => (
 )
 
 const Wrapper = styled.div<WProps>`
-  ${styles.Props.Border("right")};
-  background-color: ${p => (p.isToday ? styles.Colors.BGGray : "transparent")};
+  ${style.Props.Border("right")};
+  background-color: ${(p) => (p.isToday ? style.Color.BGGray : "transparent")};
 `
 
 const DayWrapper = styled.div`
   height: 92px;
   padding-left: 16px;
 
-  color: ${styles.Colors.FontLight};
-  ${styles.Props.Border("bottom")};
+  color: ${style.Color.FontLight};
+  ${style.Props.Border("bottom")};
 
   div:nth-of-type(1) {
     font-size: 0.8rem;
@@ -78,7 +78,7 @@ const DayWrapper = styled.div`
 
 const Divider = styled.div`
   height: 5px;
-  ${styles.Props.Border("right")};
+  ${style.Props.Border("right")};
 `
 
 const GridContainer = styled.div`

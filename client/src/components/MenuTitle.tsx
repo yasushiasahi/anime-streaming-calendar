@@ -1,6 +1,6 @@
 import * as React from "react"
 import styled from "styled-components"
-import styles from "../helpers/styles"
+import styles from "../util/style"
 import Icon, { I } from "./icon/Icon"
 
 interface Props {
@@ -25,7 +25,7 @@ const Wrapper = styled.div`
   transition: background-color 100ms linear;
 
   &:hover {
-    background-color: ${styles.Colors.BGDarkGray};
+    background-color: ${styles.Color.BGDarkGray};
   }
 
   div {

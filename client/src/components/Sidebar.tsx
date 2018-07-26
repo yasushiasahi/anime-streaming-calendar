@@ -1,7 +1,7 @@
 import * as React from "react"
 import styled from "styled-components"
 import { log } from "util"
-import styles from "../helpers/styles"
+import style from "../util/style"
 import CheckBox from "./CheckBox"
 import MenuTitle from "./MenuTitle"
 
@@ -67,14 +67,14 @@ export default class Sidebar extends React.Component<{}, State> {
 const Container = styled.aside`
   grid-area: Sidebar;
   box-sizing: border-box;
-  min-height: calc(100vh - ${styles.Sizes.HeaderHeight});
-  ${styles.Props.Border("right")};
+  min-height: calc(100vh - ${style.Size.HeaderHeight});
+  ${style.Props.Border("right")};
 `
 
 const Divider = styled.div`
   height: 0;
   margin: 8px 0;
-  ${styles.Props.Border("bottom")};
+  ${style.Props.Border("bottom")};
 `
 
 interface CBWProps {
