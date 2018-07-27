@@ -11,6 +11,8 @@ import User, { newUser } from "../util/type/user"
 import Calendar from "./Calendar"
 import Header from "./Header"
 import Sidebar from "./Sidebar"
+import FAB from "./FAB"
+import AddPre from "./AddPre"
 import StatusMessege from "./StatusMessege"
 import { log } from "util"
 
@@ -112,14 +114,16 @@ class App extends React.Component<{}, AppState, JSX.Element> {
     console.log(" ct:", this.ct)
 
     return (
-      <GridContainer>
-        <Provider value={this.ct}>
+      <Provider value={this.ct}>
+        <GridContainer>
           <Header />
-        </Provider>
-        <Sidebar ser={this.state.ser} handleSerClick={this.handleSerClick} />
-        <Calendar />
-        <StatusMessege m={this.state.msg} set={this.set} />
-      </GridContainer>
+          <Sidebar ser={this.state.ser} handleSerClick={this.handleSerClick} />
+          <Calendar />
+          <FAB />
+          <AddPre set={this.set} />
+          <StatusMessege m={this.state.msg} set={this.set} />
+        </GridContainer>
+      </Provider>
     )
   }
 }
