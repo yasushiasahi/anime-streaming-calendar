@@ -6,7 +6,7 @@ import { log } from "util"
 
 interface responseQuery {
   OK: boolean
-  Query: string | User | Service[]
+  Query: any //string | User | Service[]
 }
 
 export interface responseBody {
@@ -19,6 +19,7 @@ export enum url {
   login,
   checkSession,
   getService,
+  getWork,
 }
 
 interface Table { }

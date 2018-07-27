@@ -14,6 +14,7 @@ var Handle = map[string]func(http.ResponseWriter, *http.Request){
 	"login":        login,
 	"checkSession": checkSession,
 	"getService":   getService,
+	"getWork":      getWork,
 }
 
 type singlebody struct {

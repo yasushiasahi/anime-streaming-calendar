@@ -1,13 +1,13 @@
 package data
 
-// Service stands for users sql table
+// Service stands for service sql table
 type Service struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 	URL  string `json:"url"`
 }
 
-// GetService gets all users
+// GetService gets all services
 func GetService() (ss []Service, err error) {
 	rows, err := Db.Query("select id, name, url from services")
 	if err != nil {

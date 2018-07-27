@@ -22,6 +22,7 @@ create table anime_streaming_calendar.works(
   id int unsigned auto_increment primary key,
   name varchar(30) not null,
   url varchar(255) not null,
+  onair boolean not null,
   created datetime default current_timestamp,
   updated datetime default current_timestamp on update current_timestamp
 );
@@ -30,7 +31,6 @@ create table anime_streaming_calendar.schedules(
   id int unsigned auto_increment primary key,
   day_of_week int not null,
   url varchar(255) not null,
-  is_onair boolean not null,
   user_id int unsigned not null,
   work_id int unsigned not null,
   service_id int unsigned not null,
