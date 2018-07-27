@@ -3,7 +3,7 @@ import { createContext } from "react"
 import { hot } from "react-hot-loader"
 import styled from "styled-components"
 
-import { checkSession } from "../util/axios"
+import { api, url } from "../util/axios"
 import style from "../util/style"
 import { statusMessege, Set } from "../util/type/type"
 import User, { newUser } from "../util/type/user"
@@ -47,7 +47,7 @@ class App extends React.Component<{}, AppState, JSX.Element> {
     let m: statusMessege = []
     let ct = this.ct
 
-    let { OK, Query } = await checkSession()
+    let { OK, Query } = await api(url.checkSession, {})
     if (OK) {
       ct.user = Query as User
       m.push("ログインしました")
@@ -55,6 +55,7 @@ class App extends React.Component<{}, AppState, JSX.Element> {
       if (ct.user.id !== 0) {
         m.push("ログアウトしました")
       }
+      m.push(Query as string)
       ct.user = newUser({})
     }
 

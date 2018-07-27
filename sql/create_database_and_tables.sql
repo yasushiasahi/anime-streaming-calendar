@@ -61,3 +61,13 @@ create table anime_streaming_calendar.relate_lists_schedules(
 
 alter table anime_streaming_calendar.relate_lists_schedules add constraint fk_relate_lists_schedules_list foreign key (list_id) references lists (id);
 alter table anime_streaming_calendar.relate_lists_schedules add constraint fk_relate_lists_schedules_schedule foreign key (schedule_id) references schedules (id);
+
+
+insert into anime_streaming_calendar.services (name , url) values ( 'dTV','https://pc.video.dmkt-sp.jp/');
+insert into anime_streaming_calendar.services (name , url) values ( 'Hulu','https://www.happyon.jp/');
+insert into anime_streaming_calendar.services (name , url) values ( 'U-NEXT','https://video.unext.jp/');
+insert into anime_streaming_calendar.services (name , url) values ( 'プライム・ビデオ','https://www.amazon.co.jp/Prime-Video/b?ie=UTF8&node=3535604051/');
+insert into anime_streaming_calendar.services (name , url) values ( 'Netflix','https://www.netflix.com/jp/');
+insert into anime_streaming_calendar.services (name , url) values ( 'dアニメストア','https://anime.dmkt-sp.jp/');
+insert into anime_streaming_calendar.services (name , url) values ( 'auビデオパス','https://www.videopass.jp/');
+insert into anime_streaming_calendar.services (name , url) values ( 'niconico','www.nicovideo.jp/');

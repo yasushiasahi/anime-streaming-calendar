@@ -1,8 +1,8 @@
 import * as React from "react"
 import styled from "styled-components"
 
-import styles from "../util/style"
-import { api, ApiResponse } from "../util/axios"
+import style from "../util/style"
+import { api, url } from "../util/axios"
 import { C } from "./App"
 import User, { newUser } from "../util/type/user"
 import { statusMessege, Set } from "../util/type/type"
@@ -67,16 +67,9 @@ export default class extends React.Component<{}, HState, JSX.Element> {
     }
 
     const u = newUser({ name: t.name, password: t.pass })
-    const { status, body }: ApiResponse = await api("login", u)
-    if (!status) {
-      set([
-        "サーバーとの通信に失敗しました。時間をおいて再度サインインして下さい。",
-      ])
-      return
-    }
-
-    if (!body.OK) {
-      set([body.Query as string])
+    const { OK, Query } = await api(url.login, u)
+    if (!OK) {
+      set([Query as string])
       return
     }
 
@@ -92,21 +85,14 @@ export default class extends React.Component<{}, HState, JSX.Element> {
     }
 
     const u = newUser({ name: t.name, password: t.pass })
-    const { status, body }: ApiResponse = await api("createUser", u)
-    if (!status) {
-      set([
-        "サーバーとの通信に失敗しました。時間をおいて再度サインインして下さい。",
-      ])
-      return
-    }
-
-    if (!body.OK) {
-      set([body.Query as string])
+    const { OK, Query } = await api(url.signin, u)
+    if (!OK) {
+      set([Query as string])
       return
     }
 
     this.initState()
-    set(["アカウントを作成しました"], true)
+    set([], true)
   }
 
   render() {
@@ -147,7 +133,15 @@ export default class extends React.Component<{}, HState, JSX.Element> {
           <span>？</span>
           <Hover onClick={() => handleClick("login")}>
             <C>
-              {({ user }) => <Icon i={user.id !== 0 ? I.Logout : I.Login} />}
+              {({ user }) =>
+                user.id !== 0 ? (
+                  <UserInitial>
+                    <p>{user.name[0]}</p>
+                  </UserInitial>
+                ) : (
+                    <Icon i={I.Login} />
+                  )
+              }
             </C>
           </Hover>
         </RightFlexContainer>
@@ -160,7 +154,7 @@ export default class extends React.Component<{}, HState, JSX.Element> {
 
 const FlexWrappar = styled.header`
   grid-area: Header;
-  height: ${styles.Size.HeaderHeight};
+  height: ${style.Size.HeaderHeight};
   display: flex;
   justify-content: space-between;
   box-sizing: border-box;
@@ -168,8 +162,8 @@ const FlexWrappar = styled.header`
 
   position: relative;
 
-  color: ${styles.Color.FontLight};
-  ${styles.Props.Border("bottom")};
+  color: ${style.Color.FontLight};
+  ${style.Props.Border("bottom")};
 `
 
 const LeftFlexContainer = styled.div`
@@ -202,7 +196,7 @@ const RightFlexContainer = styled.div`
   }
 `
 
-const Hover = styled.div`
+const Circle = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -210,10 +204,13 @@ const Hover = styled.div`
   height: 48px;
   cursor: pointer;
   border-radius: 50%;
+`
+
+const Hover = Circle.extend`
   transition: background-color 100ms linear;
 
   &:hover {
-    background-color: ${styles.Color.BGDarkGray};
+    background-color: ${style.Color.BGDarkGray};
   }
 
   img[alt^="Menu"] {
@@ -222,5 +219,15 @@ const Hover = styled.div`
 
   img {
     height: 2rem;
+  }
+`
+
+const UserInitial = Circle.extend`
+  width: 40px;
+  height: 40px;
+  background-color: #006600;
+  p {
+    font-size: 1.5rem;
+    color: ${style.Color.BGWhite};
   }
 `
