@@ -1,16 +1,17 @@
 import axios, { AxiosResponse, AxiosError } from "axios"
+import { Service } from "./type/type"
 import User from "./type/user"
 import { type } from "os"
 import { log } from "util"
 
-interface responseBody {
+interface responseQuery {
   OK: boolean
-  Query: string | User
+  Query: string | User | Service[]
 }
 
-export interface ApiResponse {
+export interface responseBody {
   status: boolean
-  body: responseBody
+  body: responseQuery
 }
 
 export enum url {
@@ -22,7 +23,7 @@ export enum url {
 
 interface Table { }
 type ApiPath = string
-const axiosWrapper = async (p: ApiPath, t: Table): Promise<ApiResponse> => {
+const axiosWrapper = async (p: ApiPath, t: Table): Promise<responseBody> => {
   return await axios
     .post(`api/${p}`, t)
     .then((r: AxiosResponse) => {
@@ -42,10 +43,13 @@ const axiosWrapper = async (p: ApiPath, t: Table): Promise<ApiResponse> => {
     })
 }
 
-export const api = async (n: number, b: any): Promise<responseBody> => {
-  const { status, body }: ApiResponse = await axiosWrapper(url[n], b)
+export const api = async (n: number, b: any): Promise<responseQuery> => {
+  const { status, body }: responseBody = await axiosWrapper(url[n], b)
   if (!status) {
-    return { OK: false, Query: "サーバーとの通信に失敗しました" }
+    return {
+      OK: false,
+      Query: "サーバーとの通信に失敗しました。時間をおいてやり直して下さい。",
+    }
   }
 
   if (!body.OK) {

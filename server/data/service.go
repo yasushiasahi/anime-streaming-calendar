@@ -1,16 +1,10 @@
 package data
 
-import (
-	"time"
-)
-
 // Service stands for users sql table
 type Service struct {
-	ID        int       `json:"id"`
-	Name      string    `json:"name"`
-	URL       string    `json:"url"`
-	CreatedAt time.Time `json:"createAt"`
-	UpdatedAt time.Time `json:"updateAt"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	URL  string `json:"url"`
 }
 
 // GetService gets all users

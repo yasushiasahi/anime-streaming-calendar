@@ -4,6 +4,7 @@ import { log } from "util"
 import style from "../util/style"
 import CheckBox from "./CheckBox"
 import MenuTitle from "./MenuTitle"
+import { Service } from "../util/type/type"
 
 const SearviseDatas = [
   { id: 1, name: "Netflix" },
@@ -26,21 +27,29 @@ interface State {
   isOpens: IsOpens
 }
 
+interface SProps {
+  ser: Service[]
+  handleSerClick: (e: React.ChangeEvent<HTMLInputElement>, id: number) => void
+}
+
 interface CheckBoxDatas {
   id: number
   name: string
 }
 
-const makeCheckBoxs = (ds: CheckBoxDatas[]): JSX.Element[] => {
-  return ds.map((d) => <CheckBox key={d.id} name={d.name} />)
-}
-
-export default class Sidebar extends React.Component<{}, State> {
-  public state = {
-    isOpens: { Services: true, MyLists: true },
+export default class Sidebar extends React.Component<
+  SProps,
+  State,
+  JSX.Element
+  > {
+  constructor(props: SProps) {
+    super(props)
+    this.state = {
+      isOpens: { Services: true, MyLists: true },
+    }
   }
 
-  public handleClick = (key: string): void => {
+  handleClick = (key: string): void => {
     const copyIsOpens: IsOpens = Object.assign({}, this.state.isOpens)
     copyIsOpens[key] = !copyIsOpens[key]
     this.setState({
@@ -48,17 +57,35 @@ export default class Sidebar extends React.Component<{}, State> {
     })
   }
 
-  public render() {
-    const { isOpens } = this.state
-    const { handleClick } = this
+  render() {
+    const isOpens = this.state.isOpens
+    const { ser, handleSerClick } = this.props
+    const handleClick = this.handleClick
+
+    const serBoxs = ser.map((s) => (
+      <CheckBox key={s.id} s={s} handleSerClick={handleSerClick} />
+    ))
 
     return (
       <Container>
-        <MenuTitle title={"Services"} isOpen={isOpens.Services} handleClick={handleClick} />
-        <CheckBoxWrappar isOpen={isOpens.Services}>{makeCheckBoxs(SearviseDatas)}</CheckBoxWrappar>
+        <MenuTitle
+          title={"Services"}
+          isOpen={isOpens.Services}
+          handleClick={handleClick}
+        />
+        <CheckBoxWrappar isOpen={isOpens.Services}>{serBoxs}</CheckBoxWrappar>
         <Divider />
-        <MenuTitle title={"MyLists"} isOpen={isOpens.MyLists} handleClick={handleClick} />
-        <CheckBoxWrappar isOpen={isOpens.MyLists}>{makeCheckBoxs(MyListDatas)}</CheckBoxWrappar>
+
+        {/*
+           <MenuTitle
+          title={"MyLists"}
+          isOpen={isOpens.MyLists}
+          handleClick={handleClick}
+        />
+          <CheckBoxWrappar isOpen={isOpens.MyLists}>
+            {makeCheckBoxs(MyListDatas)}
+          </CheckBoxWrappar>
+        */}
       </Container>
     )
   }

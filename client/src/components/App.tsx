@@ -5,7 +5,7 @@ import styled from "styled-components"
 
 import { api, url } from "../util/axios"
 import style from "../util/style"
-import { statusMessege, Set } from "../util/type/type"
+import { statusMessege, Set, Service, newService } from "../util/type/type"
 import User, { newUser } from "../util/type/user"
 
 import Calendar from "./Calendar"
@@ -16,6 +16,7 @@ import { log } from "util"
 
 interface AppState {
   msg: statusMessege
+  ser: Service[]
 }
 
 export interface Contxet {
@@ -23,9 +24,10 @@ export interface Contxet {
   user: User
 }
 
-const u: User = newUser({})
+const u = newUser({})
+const s = newService()
 const nullContext: Contxet = {
-  set: (m: statusMessege, updateflag: boolean) => { },
+  set: (m: statusMessege, initFlag: boolean) => { },
   user: u,
 }
 
@@ -37,6 +39,7 @@ class App extends React.Component<{}, AppState, JSX.Element> {
 
   state = {
     msg: [""],
+    ser: [{ id: 0, name: "", url: "" }],
   }
 
   componentDidMount() {
@@ -46,20 +49,53 @@ class App extends React.Component<{}, AppState, JSX.Element> {
   init = async () => {
     let m: statusMessege = []
     let ct = this.ct
+    let ser: Service[]
 
-    let { OK, Query } = await api(url.checkSession, {})
-    if (OK) {
-      ct.user = Query as User
+    // ユーザーのログインを確認
+    const { OK: uOK, Query: uQuery } = await api(url.checkSession, {})
+    if (uOK) {
+      ct.user = uQuery as User
       m.push("ログインしました")
     } else {
       if (ct.user.id !== 0) {
         m.push("ログアウトしました")
       }
-      m.push(Query as string)
+      m.push(uQuery as string)
       ct.user = newUser({})
     }
 
-    this.setState({ msg: m })
+    // serviceのデータを取得
+    const { OK: sOK, Query: sQuery } = await api(url.getService, {})
+    if (sOK) {
+      const sQ = sQuery as Service[]
+      ser = sQ.map((s) => {
+        s.flag = true
+        return s
+      })
+    } else {
+      m.push(sQuery as string)
+      ser = [{ id: 0, name: "", url: "" }]
+    }
+
+    this.setState({
+      msg: m,
+      ser: ser,
+    })
+  }
+
+  handleSerClick = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ): void => {
+    console.log(e.target.checked)
+    const ser = this.state.ser.map((s: Service) => {
+      if (s.id === id) {
+        console.log("通過")
+        s.flag = e.target.checked
+      }
+      return s
+    })
+    this.setState({ ser: ser })
   }
 
   set = (m: statusMessege, initFlag: boolean = false): void => {
@@ -70,17 +106,17 @@ class App extends React.Component<{}, AppState, JSX.Element> {
   }
 
   render() {
-    const ct: Contxet = this.ct
-    ct.set = this.set
+    this.ct.set = this.set
+
     console.log("msg:", this.state.msg)
-    console.log(" ct:", ct)
+    console.log(" ct:", this.ct)
 
     return (
       <GridContainer>
-        <Provider value={ct}>
+        <Provider value={this.ct}>
           <Header />
         </Provider>
-        <Sidebar />
+        <Sidebar ser={this.state.ser} handleSerClick={this.handleSerClick} />
         <Calendar />
         <StatusMessege m={this.state.msg} set={this.set} />
       </GridContainer>

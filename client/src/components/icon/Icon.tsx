@@ -11,11 +11,7 @@ import * as menu from "./menu.svg"
 import * as search from "./search.svg"
 import * as up from "./up.svg"
 
-import * as amazon from "./amazon.svg"
-import * as danime from "./danime.svg"
-import * as netflix from "./netflix.svg"
-
-const svgs = [down, login, logo, logoTypo, logout, menu, search, up, amazon, danime, netflix]
+const svgs = [down, login, logo, logoTypo, logout, menu, search, up]
 
 export enum I {
   Down,
@@ -26,13 +22,12 @@ export enum I {
   Menu,
   Search,
   Up,
-  Amazon,
-  Danime,
-  Netflix,
 }
 
 interface IconProps {
   i: number
 }
 
-export default ({ i }: IconProps): JSX.Element => <img src={svgs[i]} alt={`${I[i]}アイコン`} />
+export default ({ i }: IconProps): JSX.Element => (
+  <img src={svgs[i]} alt={`${I[i]}アイコン`} />
+)
