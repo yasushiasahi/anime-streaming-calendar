@@ -1,8 +1,8 @@
 package api
 
 import (
-	"fmt"
-	"log"
+	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/yasushiasahi/proj/anime-streaming-calendar/server/data"
@@ -10,130 +10,65 @@ import (
 
 // Handle is functions set which handle apis
 var Handle = map[string]func(http.ResponseWriter, *http.Request){
-	"createUser":   createUser,
-	"checkSession": checkSession,
+	"signin":       signin,
 	"login":        login,
-	// "deleteUser": deleteUser,
-	// "getUsers":   getUsers,
+	"checkSession": checkSession,
+	"getService":   getService,
 }
 
-func createUser(w http.ResponseWriter, r *http.Request) {
-	var u data.User
-	if err := decodeBody(r, &u); err != nil {
-		errorRespons(w, "送信データの読み込みに失敗しました"+err.Error())
-		return
-	}
-
-	if err := u.GetByName(); err == nil {
-		errorRespons(w, u.Name+"さんはすでに登録されています")
-		return
-	}
-
-	if err := u.Create(); err != nil {
-		errorRespons(w, "データの作成に失敗しました"+err.Error())
-		return
-	}
-
-	u.SetCookie(w)
-	u.Password = ""
-	singleResponse(w, &u)
+type singlebody struct {
+	OK    bool
+	Query data.Row
 }
 
-func checkSession(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("_cookie")
+type multiBody struct {
+	OK    bool
+	Query []data.Row
+}
+
+type msgBody struct {
+	OK    bool
+	Query string
+}
+
+func decodeBody(r *http.Request, row data.Row) (err error) {
+	d := json.NewDecoder(r.Body)
+	for {
+		err = d.Decode(&row)
+		if err == io.EOF {
+			err = nil
+			break
+		}
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+func singleResponse(w http.ResponseWriter, r data.Row) {
+	b := singlebody{OK: true, Query: r}
+	e := json.NewEncoder(w)
+	err := e.Encode(b)
 	if err != nil {
-		errorRespons(w, "クッキーはありません")
-		return
+		errorRespons(w, "jsonのエンコードに失敗")
 	}
-
-	fmt.Println(r.Header["Cookie"])
-	fmt.Println(c.Value)
-
-	u := data.User{Token: c.Value}
-
-	if err = u.GetByToken(); err != nil {
-		errorRespons(w, "クッキーに一致するユーザーがいません")
-		return
-	}
-
-	u.SetToken()
-	if err = u.Update(); err != nil {
-		errorRespons(w, "トークンの更新に失敗しました")
-		return
-	}
-
-	u.SetCookie(w)
-	u.Password = ""
-	singleResponse(w, &u)
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
-	var u data.User
-	if err := decodeBody(r, &u); err != nil {
-		errorRespons(w, "送信データの読み込みに失敗しました")
-		return
-	}
-
-	p := data.MakeHash(u.Password)
-
-	if err := u.GetByName(); err != nil {
-		errorRespons(w, u.Name+"さんは登録されていません")
-		return
-	}
-
-	if p != u.Password {
-		errorRespons(w, u.Name+"さんのパスワードと一致しません")
-		return
-	}
-
-	u.SetToken()
-	if err := u.Update(); err != nil {
-		errorRespons(w, "トークンの更新に失敗しました")
-		return
-	}
-
-	u.SetCookie(w)
-	u.Password = ""
-	singleResponse(w, &u)
-}
-
-func updateUser(r *http.Request) string {
-	u := data.User{
-		ID:       7,
-		Name:     "たたら",
-		Password: "たたら",
-		Token:    "たたら",
-	}
-	fmt.Println(u)
-	err := u.Update()
+func errorRespons(w http.ResponseWriter, msg string) {
+	b := msgBody{OK: false, Query: msg}
+	e := json.NewEncoder(w)
+	err := e.Encode(b)
 	if err != nil {
-		log.Fatal(err)
-		return "失敗"
+		w.WriteHeader(http.StatusInternalServerError)
 	}
-	fmt.Println(u)
-	return "成功"
 }
 
-func deleteUser(r *http.Request) string {
-	u := data.User{
-		ID: 5,
-	}
-	err := u.Delete()
-	if err != nil {
-		log.Fatal(err)
-		return "失敗"
-	}
-	return "成功"
-}
-
-// unc getUser(r *http.Request) string {
-// 	u := data.User{ID: 5}
-// 	fmt.Println(u)
-// 	err := u.GetByID()
+// func multiResponse(w http.ResponseWriter, rs []data.Row) {
+// 	b := multiBody{OK: true, Query: rs}
+// 	e := json.NewEncoder(w)
+// 	err := e.Encode(b)
 // 	if err != nil {
-// 		log.Fatal(err)
-// 		return "失敗"
+// 		errorRespons(w, "jsonのエンコードに失敗")
 // 	}
-// 	fmt.Println(u)
-// 	return "成功"
 // }
