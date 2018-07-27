@@ -19,7 +19,7 @@ export const api = async (p: ApiPath, t: Table): Promise<ApiResponse> => {
   return await axios
     .post(`api/${p}`, t)
     .then((r: AxiosResponse) => {
-      console.log(r)
+      console.log(r.data.Query)
       return {
         status: true,
         body: r.data,
@@ -34,15 +34,15 @@ export const api = async (p: ApiPath, t: Table): Promise<ApiResponse> => {
     })
 }
 
-export const checkSession = async (): Promise<any> => {
+export const checkSession = async (): Promise<responseBody> => {
   const { status, body }: ApiResponse = await api("checkSession", {})
   if (!status) {
-    return { ok: true, data: "サーバーとの通信に失敗しました" }
+    return { OK: true, Query: "サーバーとの通信に失敗しました" }
   }
 
   if (!body.OK) {
-    return { ok: false, data: body.Query }
+    return { OK: false, Query: body.Query }
   }
 
-  return { ok: true, data: body.Query }
+  return { OK: true, Query: body.Query }
 }

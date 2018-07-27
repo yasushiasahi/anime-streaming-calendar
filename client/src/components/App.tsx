@@ -5,12 +5,13 @@ import styled from "styled-components"
 
 import { checkSession } from "../util/axios"
 import style from "../util/style"
-import { statusMessege } from "../util/type/type"
+import { statusMessege, Set } from "../util/type/type"
 import User, { newUser } from "../util/type/user"
 
 import Calendar from "./Calendar"
 import Header from "./Header"
 import Sidebar from "./Sidebar"
+import StatusMessege from "./StatusMessege"
 import { log } from "util"
 
 interface AppState {
@@ -18,18 +19,18 @@ interface AppState {
 }
 
 export interface Contxet {
-  msg: statusMessege
+  set: Set
   user: User
 }
 
 const u: User = newUser({})
 const nullContext: Contxet = {
-  msg: [],
+  set: (m: statusMessege, updateflag: boolean) => { },
   user: u,
 }
 
-const { Provider, Consumer: c } = createContext(nullContext)
-export const Consumer = c
+const { Provider, Consumer } = createContext(nullContext)
+export const C = Consumer
 
 class App extends React.Component<{}, AppState, JSX.Element> {
   ct: Contxet = nullContext
@@ -39,28 +40,39 @@ class App extends React.Component<{}, AppState, JSX.Element> {
   }
 
   componentDidMount() {
-    this.getAllData()
+    this.init()
   }
 
-  getAllData = async () => {
+  init = async () => {
     let m: statusMessege = []
+    let ct = this.ct
 
-    let { ok, data } = await checkSession()
-    if (ok) {
-      this.ct.user = newUser({ id: data.id, name: data.name })
+    let { OK, Query } = await checkSession()
+    if (OK) {
+      ct.user = Query as User
       m.push("ログインしました")
+    } else {
+      if (ct.user.id !== 0) {
+        m.push("ログアウトしました")
+      }
+      ct.user = newUser({})
     }
 
     this.setState({ msg: m })
   }
 
-  toggleLogin = (m: statusMessege): void => {
+  set = (m: statusMessege, initFlag: boolean = false): void => {
     this.setState({ msg: m })
+    if (initFlag) {
+      this.init()
+    }
   }
 
   render() {
     const ct: Contxet = this.ct
-    ct.msg = this.state.msg
+    ct.set = this.set
+    console.log("msg:", this.state.msg)
+    console.log(" ct:", ct)
 
     return (
       <GridContainer>
@@ -69,6 +81,7 @@ class App extends React.Component<{}, AppState, JSX.Element> {
         </Provider>
         <Sidebar />
         <Calendar />
+        <StatusMessege m={this.state.msg} set={this.set} />
       </GridContainer>
     )
   }
@@ -81,6 +94,8 @@ const GridContainer = styled.div`
   grid-template-areas:
     "Header   Header"
     "Sidebar  Calendar";
+
+  position: relative;
 `
 
 export default hot(module)(App)

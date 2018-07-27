@@ -1,7 +1,10 @@
 import { statusMessege } from "../util/type/type"
 import { InputText } from "./Header"
 
-export const isValid = ({ name = "", pass = "", passRe = "" }: InputText): statusMessege => {
+export const isValid = (
+  { name, pass, passRe }: InputText,
+  isSignin: boolean = false
+): statusMessege => {
   let m: statusMessege = []
   if (name === "") {
     m.push("名前を入力して下さい")
@@ -12,7 +15,7 @@ export const isValid = ({ name = "", pass = "", passRe = "" }: InputText): statu
   if (!/^[a-zA-Z\d-_~#$%&@:;*+?!,.¥]{4,}$/.test(pass)) {
     m.push("パスワードが不正です")
   }
-  if (pass !== passRe) {
+  if (isSignin && pass !== passRe) {
     m.push("パスワードの入力が一致しません")
   }
   return m

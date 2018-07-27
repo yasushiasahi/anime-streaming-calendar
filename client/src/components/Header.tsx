@@ -3,14 +3,16 @@ import styled from "styled-components"
 
 import styles from "../util/style"
 import { api, ApiResponse } from "../util/axios"
-import { Consumer, Contxet } from "./App"
+import { C } from "./App"
 import User, { newUser } from "../util/type/user"
+import { statusMessege, Set } from "../util/type/type"
 import { isValid } from "./helper"
 
 import Login from "./Login"
 import Signin from "./Signin"
 import Icon, { I } from "./icon/Icon"
 import InputText from "./InputText"
+
 import { checkServerIdentity } from "tls"
 import { log } from "util"
 
@@ -50,44 +52,73 @@ export default class extends React.Component<{}, HState, JSX.Element> {
     this.setState({ inputText: copyInputText })
   }
 
-  signin = async (): Promise<any> => {
-    const t: InputText = this.state.inputText
-    if (isValid(t).length !== 0) {
-      // TODO 再入力を促す
-      console.log(isValid(t))
-      return
-    }
-
-    const u: User = newUser({ name: t.name, password: t.pass })
-    const { status, body }: ApiResponse = await api("createUser", u)
-    if (!status) {
-      // TODO エラーメッセージを返す
-      console.log("サーバーとの通信に失敗しました。時間をおいて再度サインインして下さい。")
-      return
-    }
-
-    if (!body.OK) {
-      // TODO エラーメッセージを返す
-      console.log(body.Query)
-      return
-    }
-
+  initState = (): void => {
     this.setState({
       inputText: { name: "", pass: "", passRe: "" },
       isShown: { login: false, signin: false },
     })
-    console.log(body.Query)
+  }
+
+  login = async (set: Set): Promise<any> => {
+    const t: InputText = this.state.inputText
+    if (isValid(t).length !== 0) {
+      set(isValid(t))
+      return
+    }
+
+    const u = newUser({ name: t.name, password: t.pass })
+    const { status, body }: ApiResponse = await api("login", u)
+    if (!status) {
+      set([
+        "サーバーとの通信に失敗しました。時間をおいて再度サインインして下さい。",
+      ])
+      return
+    }
+
+    if (!body.OK) {
+      set([body.Query as string])
+      return
+    }
+
+    this.initState()
+    set([], true)
+  }
+
+  signin = async (set: Set): Promise<any> => {
+    const t: InputText = this.state.inputText
+    if (isValid(t, true).length !== 0) {
+      set(isValid(t))
+      return
+    }
+
+    const u = newUser({ name: t.name, password: t.pass })
+    const { status, body }: ApiResponse = await api("createUser", u)
+    if (!status) {
+      set([
+        "サーバーとの通信に失敗しました。時間をおいて再度サインインして下さい。",
+      ])
+      return
+    }
+
+    if (!body.OK) {
+      set([body.Query as string])
+      return
+    }
+
+    this.initState()
+    set(["アカウントを作成しました"], true)
   }
 
   render() {
     const { inputText, isShown } = this.state
-    const { handleClick, handleChange, signin } = this
+    const { handleClick, handleChange, initState, login, signin } = this
     const loginDom = (
       <Login
         name={inputText.name}
         pass={inputText.pass}
         handleChange={handleChange}
         handleClick={handleClick}
+        login={login}
       />
     )
     const signinDom = (
@@ -97,6 +128,7 @@ export default class extends React.Component<{}, HState, JSX.Element> {
         passRe={inputText.passRe}
         handleChange={handleChange}
         handleClick={handleClick}
+        initState={initState}
         signin={signin}
       />
     )
@@ -114,7 +146,9 @@ export default class extends React.Component<{}, HState, JSX.Element> {
           <Icon i={I.Search} />
           <span>？</span>
           <Hover onClick={() => handleClick("login")}>
-            <Icon i={I.Login} />
+            <C>
+              {({ user }) => <Icon i={user.id !== 0 ? I.Logout : I.Login} />}
+            </C>
           </Hover>
         </RightFlexContainer>
         {isShown.login ? loginDom : null}

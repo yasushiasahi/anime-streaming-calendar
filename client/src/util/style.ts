@@ -4,6 +4,9 @@ const Props = {
   Border: (side: string): string => {
     return `border-${side}: 0.5px solid #e0e0e0`
   },
+  BoxShadow: () => {
+    return "box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2)"
+  },
 }
 
 const Size = {

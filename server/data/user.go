@@ -1,7 +1,6 @@
 package data
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -54,10 +53,10 @@ func (u *User) SetCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &c)
 }
 
-// GetByToken ..
+// GetByToken returns user which match token
 func (u *User) GetByToken() (err error) {
 	err = Db.QueryRow(
-		"select id,name,password from users where token = ?",
+		"select id, name, password from users where token = ?",
 		u.Token,
 	).Scan(
 		&u.ID,
@@ -65,24 +64,55 @@ func (u *User) GetByToken() (err error) {
 		&u.Password,
 	)
 	if err != nil {
-		fmt.Println(err.Error())
 		return
 	}
 	return
 }
 
-// GetByID finds user by ID
-func (u *User) GetByID() (err error) {
+// GetByName returns user which match token
+func (u *User) GetByName() (err error) {
 	err = Db.QueryRow(
-		"select id, name, password, token from users where id = ?",
-		u.ID,
+		"select id, password from users where name = ?",
+		u.Name,
 	).Scan(
 		&u.ID,
-		&u.Name,
 		&u.Password,
-		&u.Token,
+	)
+	if err != nil {
+		return
+	}
+	return
+}
+
+// Update update user by ID
+func (u *User) Update() (err error) {
+	_, err = Db.Exec(
+		"update users set name = ?, password = ?, token = ? where id = ?",
+		u.Name,
+		u.Password,
+		u.Token,
+		u.ID,
 	)
 	return
+}
+
+// Delete deletes user by Id
+func (u *User) Delete() (err error) {
+	_, err = Db.Exec(
+		"delete from users where id = ?",
+		u.ID,
+	)
+	return
+}
+
+// SetToken updates users token
+func (u *User) SetToken() {
+	ts := time.Now().Format(time.RFC3339Nano)
+	u.Token = MakeHash(u.Name + ts)
+}
+
+func (u *User) encryptPassword() {
+	u.Password = MakeHash(u.Password)
 }
 
 // GetAll gets all users
@@ -108,34 +138,4 @@ func GetAll() (us []User, err error) {
 	rows.Close()
 
 	return
-}
-
-// Update update user by ID
-func (u *User) Update() (err error) {
-	_, err = Db.Exec(
-		"update users set name = ?, password = ?, token = ? where id = ?",
-		u.Name,
-		u.Password,
-		u.Token,
-		u.ID,
-	)
-	return
-}
-
-// Delete deletes user by Id
-func (u *User) Delete() (err error) {
-	_, err = Db.Exec(
-		"delete from users where id = ?",
-		u.ID,
-	)
-	return
-}
-
-func (u *User) encryptPassword() {
-	u.Password = makeHash(u.Password)
-}
-
-func (u *User) SetToken() {
-	ts := time.Now().Format(time.RFC3339Nano)
-	u.Token = makeHash(u.Name + ts)
 }

@@ -12,7 +12,7 @@ import (
 var Handle = map[string]func(http.ResponseWriter, *http.Request){
 	"createUser":   createUser,
 	"checkSession": checkSession,
-	// "updateUser": updateUser,
+	"login":        login,
 	// "deleteUser": deleteUser,
 	// "getUsers":   getUsers,
 }
@@ -21,6 +21,11 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	var u data.User
 	if err := decodeBody(r, &u); err != nil {
 		errorRespons(w, "送信データの読み込みに失敗しました"+err.Error())
+		return
+	}
+
+	if err := u.GetByName(); err == nil {
+		errorRespons(w, u.Name+"さんはすでに登録されています")
 		return
 	}
 
@@ -62,26 +67,34 @@ func checkSession(w http.ResponseWriter, r *http.Request) {
 	singleResponse(w, &u)
 }
 
-func getUser(r *http.Request) string {
-	u := data.User{ID: 5}
-	fmt.Println(u)
-	err := u.GetByID()
-	if err != nil {
-		log.Fatal(err)
-		return "失敗"
+func login(w http.ResponseWriter, r *http.Request) {
+	var u data.User
+	if err := decodeBody(r, &u); err != nil {
+		errorRespons(w, "送信データの読み込みに失敗しました")
+		return
 	}
-	fmt.Println(u)
-	return "成功"
-}
 
-func getUsers(r *http.Request) string {
-	us, err := data.GetAll()
-	fmt.Println(us)
-	if err != nil {
-		log.Fatal(err)
-		return "失敗"
+	p := data.MakeHash(u.Password)
+
+	if err := u.GetByName(); err != nil {
+		errorRespons(w, u.Name+"さんは登録されていません")
+		return
 	}
-	return "成功"
+
+	if p != u.Password {
+		errorRespons(w, u.Name+"さんのパスワードと一致しません")
+		return
+	}
+
+	u.SetToken()
+	if err := u.Update(); err != nil {
+		errorRespons(w, "トークンの更新に失敗しました")
+		return
+	}
+
+	u.SetCookie(w)
+	u.Password = ""
+	singleResponse(w, &u)
 }
 
 func updateUser(r *http.Request) string {
@@ -112,3 +125,15 @@ func deleteUser(r *http.Request) string {
 	}
 	return "成功"
 }
+
+// unc getUser(r *http.Request) string {
+// 	u := data.User{ID: 5}
+// 	fmt.Println(u)
+// 	err := u.GetByID()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 		return "失敗"
+// 	}
+// 	fmt.Println(u)
+// 	return "成功"
+// }

@@ -1,8 +1,10 @@
 import * as React from "react"
 import styled from "styled-components"
-import styles from "../util/style"
+import style from "../util/style"
 import InputText from "./InputText"
+import { Set } from "../util/type/type"
 import Icon, { I } from "./icon/Icon"
+import { C } from "./App"
 
 interface LProps {
   name: string
@@ -10,61 +12,87 @@ interface LProps {
   passRe: string
   handleChange: (e: React.FormEvent) => void
   handleClick: (key: string) => void
-  signin: () => Promise<any>
+  initState: () => void
+  signin: (set: Set) => Promise<any>
 }
 
-export default ({ name, pass, passRe, handleChange, handleClick, signin }: LProps) => (
-  <Wrapper>
-    <GridContainer>
-      <TitleWrapper>
-        <Icon i={I.LogoTypo} />
-        <div>アカウントの作成</div>
-      </TitleWrapper>
-      <FormWrapper>
-        <div>
-          <InputText label={"ユーザー名"} name={"name"} value={name} handleChange={handleChange} />
-          <p>３文字以上で入力して下さい</p>
-        </div>
-        <div>
-          <PassWrapper>
+export default ({
+  name,
+  pass,
+  passRe,
+  handleChange,
+  handleClick,
+  initState,
+  signin,
+}: LProps) => (
+    <Wrapper>
+      <GridContainer>
+        <TitleWrapper>
+          <Icon i={I.LogoTypo} />
+          <div>アカウントの作成</div>
+        </TitleWrapper>
+        <FormWrapper>
+          <div>
             <InputText
-              label={"パスワード"}
-              type={"password"}
-              name={"pass"}
-              value={pass}
+              label={"ユーザー名"}
+              name={"name"}
+              value={name}
               handleChange={handleChange}
             />
-            <Divider />
-            <InputText
-              label={"パスワードの確認"}
-              type={"password"}
-              name={"passRe"}
-              value={passRe}
-              handleChange={handleChange}
-            />
-          </PassWrapper>
-          <p>半角英字、数字、記号を組み合わせて４文字以上で入力してください</p>{" "}
-        </div>
-      </FormWrapper>
-      <ButtonWrapper>
-        <p onClick={() => handleClick("signin")}>キャンセル</p>
-        <styles.SC.Button blue onClick={signin}>
-          アカウントを作成
-        </styles.SC.Button>
-      </ButtonWrapper>
-      <Agreement>
-        <div>
-          <Icon i={I.Logo} />
-          <div>免責事項</div>
-        </div>
-        <p>ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ</p>
-        <p>ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ</p>
-        <p>ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ</p>
-        <p>ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ</p>
-      </Agreement>
-    </GridContainer>
-  </Wrapper>
-)
+            <p>３文字以上で入力して下さい</p>
+          </div>
+          <div>
+            <PassWrapper>
+              <InputText
+                label={"パスワード"}
+                type={"password"}
+                name={"pass"}
+                value={pass}
+                handleChange={handleChange}
+              />
+              <Divider />
+              <InputText
+                label={"パスワードの確認"}
+                type={"password"}
+                name={"passRe"}
+                value={passRe}
+                handleChange={handleChange}
+              />
+            </PassWrapper>
+            <p>半角英字、数字、記号を組み合わせて４文字以上で入力してください</p>{" "}
+          </div>
+        </FormWrapper>
+        <ButtonWrapper>
+          <p onClick={() => initState()}>キャンセル</p>
+          <C>
+            {({ set }) => (
+              <style.SC.Button blue onClick={() => signin(set)}>
+                アカウントを作成
+            </style.SC.Button>
+            )}
+          </C>
+        </ButtonWrapper>
+        <Agreement>
+          <div>
+            <Icon i={I.Logo} />
+            <div>免責事項</div>
+          </div>
+          <p>
+            ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ
+        </p>
+          <p>
+            ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ
+        </p>
+          <p>
+            ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ
+        </p>
+          <p>
+            ほげほげほげほげほげほげほげほげほげほえほげほげほげほえほえｇへおｇほえｇ
+        </p>
+        </Agreement>
+      </GridContainer>
+    </Wrapper>
+  )
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -74,11 +102,11 @@ const Wrapper = styled.div`
   align-items: center;
 
   position: absolute;
-  z-index: 10;
+  z-index: 20;
   top: 0px;
   left: 0px;
 
-  background-color: ${styles.Color.BGWhite};
+  background-color: ${style.Color.BGWhite};
 `
 
 const GridContainer = styled.div`
@@ -108,7 +136,7 @@ const TitleWrapper = styled.div`
   }
 
   div {
-    color: ${styles.Color.FontDrak};
+    color: ${style.Color.FontDrak};
     padding-right: 5px;
     font-size: 1.5rem;
   }
@@ -123,13 +151,13 @@ const FormWrapper = styled.div`
 
   label {
     font-size: 0.9rem;
-    color: ${styles.Color.FontNormal};
+    color: ${style.Color.FontNormal};
   }
 
   p {
     margin: 10px 0;
     font-size: 0.75rem;
-    color: ${styles.Color.FontDrak};
+    color: ${style.Color.FontDrak};
   }
 `
 
@@ -147,7 +175,8 @@ const ButtonWrapper = styled.div`
   align-items: center;
 
   p {
-    color: ${styles.Color.Blue};
+    color: ${style.Color.Blue};
+    cursor: pointer;
   }
   span {
     padding: 5px 30px;
@@ -160,7 +189,7 @@ const Agreement = styled.div`
   flex-direction: column;
   justify-content: space-around;
   padding: 50px 0 50px 50px;
-  color: ${styles.Color.FontDrak};
+  color: ${style.Color.FontDrak};
 
   div {
     display: flex;

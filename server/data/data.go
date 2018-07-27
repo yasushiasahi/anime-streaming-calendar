@@ -29,7 +29,8 @@ func InitDB() {
 	}
 }
 
-func makeHash(str string) (hs string) {
+// MakeHash creats sha256
+func MakeHash(str string) (hs string) {
 	sha := sha256.New()
 	io.WriteString(sha, str+salt)
 	hs = fmt.Sprintf("%x", sha.Sum(nil))
