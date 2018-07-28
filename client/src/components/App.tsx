@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Component } from "react"
 import { createContext } from "react"
 import { hot } from "react-hot-loader"
 import styled from "styled-components"
@@ -13,12 +14,15 @@ import Header from "./Header"
 import Sidebar from "./Sidebar"
 import FAB from "./FAB"
 import AddPre from "./AddPre"
+import WorkEditer from "./WorkEditer"
 import StatusMessege from "./StatusMessege"
 import { log } from "util"
 
 interface AppState {
   msg: statusMessege
   ser: Service[]
+  isEdit: boolean
+  isAdd: boolean
 }
 
 export interface Contxet {
@@ -27,7 +31,6 @@ export interface Contxet {
 }
 
 const u = newUser({})
-const s = newService()
 const nullContext: Contxet = {
   set: (m: statusMessege, initFlag: boolean) => { },
   user: u,
@@ -36,12 +39,14 @@ const nullContext: Contxet = {
 const { Provider, Consumer } = createContext(nullContext)
 export const C = Consumer
 
-class App extends React.Component<{}, AppState, JSX.Element> {
+class App extends Component<{}, AppState, JSX.Element> {
   ct: Contxet = nullContext
 
   state = {
     msg: [""],
     ser: [{ id: 0, name: "", url: "" }],
+    isEdit: false,
+    isAdd: false,
   }
 
   componentDidMount() {
@@ -85,6 +90,13 @@ class App extends React.Component<{}, AppState, JSX.Element> {
     })
   }
 
+  set = (m: statusMessege, initFlag: boolean = false): void => {
+    this.setState({ msg: m })
+    if (initFlag) {
+      this.init()
+    }
+  }
+
   handleSerClick = (
     e: React.ChangeEvent<HTMLInputElement>,
     id: number
@@ -100,28 +112,40 @@ class App extends React.Component<{}, AppState, JSX.Element> {
     this.setState({ ser: ser })
   }
 
-  set = (m: statusMessege, initFlag: boolean = false): void => {
-    this.setState({ msg: m })
-    if (initFlag) {
-      this.init()
+  toggleEdit() {
+    const { isEdit, isAdd } = this.state
+    if (this.state.isAdd) {
+      this.setState({
+        isEdit: !this.state.isEdit,
+        isAdd: false,
+      })
     }
+    this.setState({ isEdit: !this.state.isEdit })
+  }
+
+  toggleAdd = () => {
+    console.log("クリック")
+    this.setState({ isAdd: !this.state.isAdd })
   }
 
   render() {
+    const { msg, ser, isEdit, isAdd } = this.state
+    const { ct, set, handleSerClick, toggleAdd, toggleEdit } = this
     this.ct.set = this.set
 
-    console.log("msg:", this.state.msg)
-    console.log(" ct:", this.ct)
+    console.log("msg:", msg)
+    console.log(" ct:", ct)
 
     return (
-      <Provider value={this.ct}>
+      <Provider value={ct}>
         <GridContainer>
           <Header />
-          <Sidebar ser={this.state.ser} handleSerClick={this.handleSerClick} />
+          <Sidebar ser={ser} handleSerClick={handleSerClick} />
           <Calendar />
-          <FAB />
-          <AddPre set={this.set} />
-          <StatusMessege m={this.state.msg} set={this.set} />
+          <FAB toggleAdd={toggleAdd} />
+          {isAdd ? <AddPre set={set} isEdit={isEdit} /> : null}
+          {isEdit ? <WorkEditer /> : null}
+          <StatusMessege m={msg} set={set} />
         </GridContainer>
       </Provider>
     )

@@ -1,14 +1,17 @@
 import * as React from "react"
 import styled from "styled-components"
+import { injectGlobal } from "styled-components"
 import Icon, { I } from "./icon/Icon"
+import { MouseEvent } from "react"
 
-export default () => (
-  <FAB>
+export default ({ toggleAdd }: any) => (
+  <div id="fab" onClick={toggleAdd}>
     <Icon i={I.AddW} />
-  </FAB>
+  </div>
 )
 
-const FAB = styled.div`
+injectGlobal`
+#fab{
   display: fle;
   justify-content: center;
   align-items: center;
@@ -32,5 +35,5 @@ const FAB = styled.div`
     width: 35%;
     height: 35%;
   }
-
+}
 `

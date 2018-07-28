@@ -12,6 +12,7 @@ import InputText from "./InputText"
 import axios from "axios"
 import { resolve } from "path"
 import { api, url } from "../util/axios"
+import WorkEditer from "./WorkEditer"
 
 interface APState {
   url: string
@@ -19,6 +20,7 @@ interface APState {
 
 interface APProps {
   set: Set
+  isEdit: boolean
 }
 
 export default class AddPre extends Component<APProps, APState, JSX.Element> {
@@ -46,11 +48,13 @@ export default class AddPre extends Component<APProps, APState, JSX.Element> {
       set([
         "入力が不正です。ブラウザのアドレスバーからコピーして貼り付けて下さい",
       ])
+      return
     }
 
     const { OK, Query } = await api(url.getWork, newWork({ url: result }))
     if (OK) {
       set([`${Query.name}はすでに登録済みです`])
+      return
     }
   }
 
