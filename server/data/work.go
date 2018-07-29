@@ -9,27 +9,35 @@ type Work struct {
 }
 
 // Create ...
-func (w *Work) Create() (err error) { return }
+func (wk *Work) Create() (err error) {
+	_, err = Db.Exec(
+		"insert into works (name, url, onair) values (?, ?, ?)",
+		wk.Name,
+		wk.URL,
+		wk.Onair,
+	)
+	return
+}
 
 // GetWorks gets all works
-func GetWorks() (ss []Work, err error) {
+func GetWorks() (wks []Work, err error) {
 	rows, err := Db.Query("select id, name, url, onair from works")
 	if err != nil {
 		return
 	}
 
 	for rows.Next() {
-		w := Work{}
+		wk := Work{}
 		err = rows.Scan(
-			&w.ID,
-			&w.Name,
-			&w.URL,
-			&w.Onair,
+			&wk.ID,
+			&wk.Name,
+			&wk.URL,
+			&wk.Onair,
 		)
 		if err != nil {
 			return
 		}
-		ss = append(ss, w)
+		wks = append(wks, wk)
 	}
 	rows.Close()
 
@@ -37,14 +45,14 @@ func GetWorks() (ss []Work, err error) {
 }
 
 // GetByURL returns user which match url
-func (w *Work) GetByURL() (err error) {
+func (wk *Work) GetByURL() (err error) {
 	err = Db.QueryRow(
 		"select id, name, Onair from works where url = ?",
-		w.URL,
+		wk.URL,
 	).Scan(
-		&w.ID,
-		&w.Name,
-		&w.Onair,
+		&wk.ID,
+		&wk.Name,
+		&wk.Onair,
 	)
 	if err != nil {
 		return

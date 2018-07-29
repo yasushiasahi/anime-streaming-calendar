@@ -13,29 +13,42 @@ import axios from "axios"
 import { resolve } from "path"
 import { api, url } from "../util/axios"
 
-export default class WorkEditer extends Component {
-  constructor({ }) {
-    super({})
-  }
-
-  render() {
-    return (
-      <Wrapper>
-        <WorkAria>
-          <Icon i={I.Close} />
-          <Title>
-            <input type="text" placeholder="作品名を入力して下さい" />
-            <style.SC.Button blue>保存</style.SC.Button>
-            <div>
-              作品公式HP：
-              <a href="">jashinchan.com</a>
-            </div>
-          </Title>
-        </WorkAria>
-      </Wrapper>
-    )
-  }
+interface WEProps {
+  name: string
+  url: string
+  handleChange?: (e: React.FormEvent) => void
+  save: (set: Set) => Promise<any>
 }
+
+export default ({ name, url, handleChange, save }: WEProps) => (
+  <Wrapper>
+    <WorkAria>
+      <Icon i={I.Close} />
+      <Title>
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={(e) => handleChange(e)}
+          placeholder="作品名を入力して下さい"
+        />
+        <C>
+          {({ set }) => (
+            <style.SC.Button blue onClick={() => save(set)}>
+              保存
+            </style.SC.Button>
+          )}
+        </C>
+        <div>
+          作品公式HP：
+          <a href={`http://${url}`} rel="noopener noreferrer" target="_blank">
+            {url}
+          </a>
+        </div>
+      </Title>
+    </WorkAria>
+  </Wrapper>
+)
 
 const Wrapper = styled.div`
   width: 100vw;

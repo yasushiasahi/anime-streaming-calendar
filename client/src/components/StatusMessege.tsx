@@ -27,11 +27,10 @@ export default class String extends React.Component<SMProps, {}, JSX.Element> {
     this.div = React.createRef()
   }
 
-  componentDidMount() {
-    console.log("マウント")
-  }
-
   componentDidUpdate() {
+    if (this.id !== 0) {
+      clearTimeout(this.id)
+    }
     if (this.props.m.length !== 0) {
       this.hideSelf()
     }

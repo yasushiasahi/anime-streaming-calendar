@@ -2,90 +2,52 @@ import * as React from "react"
 import { Component } from "react"
 import styled from "styled-components"
 import style from "../util/style"
-import { Set, newWork } from "../util/type/type"
-import User from "../util/type/user"
-import { statusMessege } from "../util/type/type"
-import { C } from "./App"
-import Icon, { I } from "./icon/Icon"
-import { log } from "util"
-import InputText from "./InputText"
-import axios from "axios"
-import { resolve } from "path"
-import { api, url } from "../util/axios"
-import WorkEditer from "./WorkEditer"
 
-interface APState {
-  url: string
-}
+import { Set } from "../util/type/type"
+import User from "../util/type/user"
+import { C } from "./App"
+
+import Icon, { I } from "./icon/Icon"
+import InputText from "./InputText"
 
 interface APProps {
-  set: Set
-  isEdit: boolean
+  url: string
+  handleChange: (e: React.FormEvent) => void
+  handleClick: (key: string) => void
+  next: (set: Set) => Promise<any>
 }
 
-export default class AddPre extends Component<APProps, APState, JSX.Element> {
-  constructor(props: APProps) {
-    super(props)
-    this.state = {
-      url: "",
-    }
-  }
-
-  handleChange = (e: React.FormEvent<HTMLInputElement>): void => {
-    this.setState({ url: e.currentTarget.value })
-  }
-
-  handleClick = async () => {
-    const set = this.props.set
-    const wUrl = this.state.url
-    if (wUrl.length === 0) {
-      set(["入力が空です"])
-      return
-    }
-
-    const result = wUrl.match(/^https?:\/{2,}(.*?)(?:\/|\?|#|$)/)[1]
-    if (result === null) {
-      set([
-        "入力が不正です。ブラウザのアドレスバーからコピーして貼り付けて下さい",
-      ])
-      return
-    }
-
-    const { OK, Query } = await api(url.getWork, newWork({ url: result }))
-    if (OK) {
-      set([`${Query.name}はすでに登録済みです`])
-      return
-    }
-  }
-
-  render() {
-    return (
-      <Wrapper>
-        <GridContainer>
-          <IconWrapper>
-            <Icon i={I.Close} />
-          </IconWrapper>
-          <FromWrapper>
-            <InputText
-              label={"アニメ公式ページURL"}
-              name={"url"}
-              value={this.state.url}
-              handleChange={this.handleChange}
-            />
-          </FromWrapper>
-          <ButtonWrapper>
-            <p>
-              追加したいアニメ公式HPのURLを<br />
-              ブラウザのアドレスバーからコピーして貼り付けて下さい
-            </p>
-            <style.SC.Button blue onClick={() => this.handleClick()}>
-              次へ
-            </style.SC.Button>
-          </ButtonWrapper>
-        </GridContainer>
-      </Wrapper>
-    )
-  }
+export default ({ url, handleChange, handleClick, next }: APProps) => {
+  return (
+    <Wrapper>
+      <GridContainer>
+        <IconWrapper>
+          <Icon i={I.Close} />
+        </IconWrapper>
+        <FromWrapper>
+          <InputText
+            label={"アニメ公式ページURL"}
+            name={"url"}
+            value={url}
+            handleChange={handleChange}
+          />
+        </FromWrapper>
+        <ButtonWrapper>
+          <p>
+            追加したいアニメ公式HPのURLを<br />
+            ブラウザのアドレスバーからコピーして貼り付けて下さい
+          </p>
+          <C>
+            {({ set }) => (
+              <style.SC.Button blue onClick={() => next(set)}>
+                次へ
+              </style.SC.Button>
+            )}
+          </C>
+        </ButtonWrapper>
+      </GridContainer>
+    </Wrapper>
+  )
 }
 
 const Wrapper = styled.div`

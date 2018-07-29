@@ -22,18 +22,15 @@ export interface Work {
   name: string
   url: string
   onair: boolean
-  createdat: string
-  updatedat: string
+  flag?: boolean
 }
 
-export const newWork = ({ url = "" }): Work => {
+export const newWork = ({ name = "", url = "", onair = true }): Work => {
   const w: Work = {
     id: 0,
-    name: "",
+    name: name,
     url: url,
-    onair: false,
-    createdat: "",
-    updatedat: "",
+    onair: onair,
   }
   return w
 }

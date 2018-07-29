@@ -19,7 +19,9 @@ export enum url {
   login,
   checkSession,
   getService,
+  getWorks,
   getWork,
+  addWork,
 }
 
 interface Table { }

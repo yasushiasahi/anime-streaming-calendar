@@ -1,25 +1,16 @@
 import * as React from "react"
+import { Component } from "react"
 import styled from "styled-components"
-import { log } from "util"
-import style from "../util/style"
-import CheckBox from "./CheckBox"
-import MenuTitle from "./MenuTitle"
-import { Service } from "../util/type/type"
 
-const SearviseDatas = [
-  { id: 1, name: "Netflix" },
-  { id: 2, name: "Amazonプライム" },
-  { id: 3, name: "ｄアニメストア" },
-]
-const MyListDatas = [
-  { id: 1, name: "2018冬" },
-  { id: 2, name: "2018春" },
-  { id: 3, name: "2018夏" },
-]
+import style from "../util/style"
+import { Service, Work } from "../util/type/type"
+
+import CheckBoxsBox from "./CheckBoxsBox"
+import MenuTitle from "./MenuTitle"
 
 interface IsOpens {
-  Services: boolean
-  MyLists: boolean
+  svs: boolean
+  wks: boolean
   [key: string]: boolean
 }
 
@@ -28,24 +19,20 @@ interface State {
 }
 
 interface SProps {
-  ser: Service[]
-  handleSerClick: (e: React.ChangeEvent<HTMLInputElement>, id: number) => void
+  svs: Service[]
+  wks: Work[]
+  handleCheckBoxClick: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number,
+    key: string
+  ) => void
 }
 
-interface CheckBoxDatas {
-  id: number
-  name: string
-}
-
-export default class Sidebar extends React.Component<
-  SProps,
-  State,
-  JSX.Element
-  > {
+export default class Sidebar extends Component<SProps, State, JSX.Element> {
   constructor(props: SProps) {
     super(props)
     this.state = {
-      isOpens: { Services: true, MyLists: true },
+      isOpens: { svs: true, wks: true },
     }
   }
 
@@ -59,33 +46,25 @@ export default class Sidebar extends React.Component<
 
   render() {
     const isOpens = this.state.isOpens
-    const { ser, handleSerClick } = this.props
+    const { svs, wks, handleCheckBoxClick } = this.props
     const handleClick = this.handleClick
-
-    const serBoxs = ser.map((s) => (
-      <CheckBox key={s.id} s={s} handleSerClick={handleSerClick} />
-    ))
 
     return (
       <Container>
-        <MenuTitle
-          title={"Services"}
-          isOpen={isOpens.Services}
+        <CheckBoxsBox
+          isOpen={isOpens.svs}
+          data={svs}
+          dataType={"svs"}
           handleClick={handleClick}
+          handleCheckBoxClick={handleCheckBoxClick}
         />
-        <CheckBoxWrappar isOpen={isOpens.Services}>{serBoxs}</CheckBoxWrappar>
-        <Divider />
-
-        {/*
-           <MenuTitle
-          title={"MyLists"}
-          isOpen={isOpens.MyLists}
+        <CheckBoxsBox
+          isOpen={isOpens.wks}
+          data={wks}
+          dataType={"wks"}
           handleClick={handleClick}
+          handleCheckBoxClick={handleCheckBoxClick}
         />
-          <CheckBoxWrappar isOpen={isOpens.MyLists}>
-            {makeCheckBoxs(MyListDatas)}
-          </CheckBoxWrappar>
-        */}
       </Container>
     )
   }
@@ -96,18 +75,4 @@ const Container = styled.aside`
   box-sizing: border-box;
   min-height: calc(100vh - ${style.Size.HeaderHeight});
   ${style.Props.Border("right")};
-`
-
-const Divider = styled.div`
-  height: 0;
-  margin: 8px 0;
-  ${style.Props.Border("bottom")};
-`
-
-interface CBWProps {
-  isOpen: boolean
-}
-
-const CheckBoxWrappar = styled.div<CBWProps>`
-  display: ${(p) => (p.isOpen ? "block" : "none")};
 `

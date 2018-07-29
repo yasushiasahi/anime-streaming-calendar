@@ -1,33 +1,58 @@
 package api
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
 	"github.com/yasushiasahi/proj/anime-streaming-calendar/server/data"
 )
 
-// type serviceBody struct {
-// 	OK    bool
-// 	Query []data.Service
-// }
+type worksBody struct {
+	OK    bool
+	Query []data.Work
+}
 
-func getWork(w http.ResponseWriter, r *http.Request) {
-	work := data.Work{}
-	if err := decodeBody(r, &work); err != nil {
+func addWork(w http.ResponseWriter, r *http.Request) {
+	wk := data.Work{}
+	if err := decodeBody(r, &wk); err != nil {
 		errorRespons(w, "送信データの読み込みに失敗しました"+err.Error())
 		return
 	}
 
-	fmt.Println("11", work)
-
-	if err := work.GetByURL(); err != nil {
-		errorRespons(w, work.URL+"は登録されていません"+err.Error())
-		panic(err.Error())
+	if err := wk.Create(); err != nil {
+		errorRespons(w, "データの保存に失敗しました"+err.Error())
+		return
 	}
 
-	fmt.Println("22", work)
+	singleResponse(w, &wk)
+}
 
-	singleResponse(w, &work)
+func getWork(w http.ResponseWriter, r *http.Request) {
+	wk := data.Work{}
+	if err := decodeBody(r, &wk); err != nil {
+		errorRespons(w, "送信データの読み込みに失敗しました"+err.Error())
+		return
+	}
 
+	if err := wk.GetByURL(); err != nil {
+		errorRespons(w, wk.URL+"は登録されていません"+err.Error())
+		return
+	}
+
+	singleResponse(w, &wk)
+}
+
+func getWorks(w http.ResponseWriter, r *http.Request) {
+	wks, err := data.GetWorks()
+	if err != nil {
+		errorRespons(w, "作品データの読み込みに失敗しました")
+		return
+	}
+
+	b := worksBody{OK: true, Query: wks}
+	e := json.NewEncoder(w)
+	err = e.Encode(b)
+	if err != nil {
+		errorRespons(w, "jsonのエンコードに失敗"+err.Error())
+	}
 }

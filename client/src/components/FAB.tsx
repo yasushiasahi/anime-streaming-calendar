@@ -4,8 +4,12 @@ import { injectGlobal } from "styled-components"
 import Icon, { I } from "./icon/Icon"
 import { MouseEvent } from "react"
 
-export default ({ toggleAdd }: any) => (
-  <div id="fab" onClick={toggleAdd}>
+interface FProps {
+  handleClick: (key: string) => void
+}
+
+export default ({ handleClick }: FProps) => (
+  <div id="fab" onClick={() => handleClick("add")}>
     <Icon i={I.AddW} />
   </div>
 )
