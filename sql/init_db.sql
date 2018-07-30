@@ -23,9 +23,12 @@ create table anime_streaming_calendar.works(
   name varchar(30) not null,
   url varchar(255) not null,
   onair boolean not null,
+  user_id int unsigned not null,
   created datetime default current_timestamp,
   updated datetime default current_timestamp on update current_timestamp
 );
+
+alter table anime_streaming_calendar.works add constraint fk_works_user foreign key (user_id) references users (id);
 
 create table anime_streaming_calendar.schedules(
   id int unsigned auto_increment primary key,

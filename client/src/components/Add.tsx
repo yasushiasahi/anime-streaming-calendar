@@ -2,7 +2,7 @@ import * as React from "react"
 import { Component } from "react"
 import styled from "styled-components"
 
-import { Set, newWork } from "../util/type/type"
+import { Set, Work, newWork } from "../util/type/type"
 import { api, url } from "../util/axios"
 
 import FAB from "./FAB"
@@ -25,6 +25,7 @@ interface IsShown {
 interface AState {
   isShown: IsShown
   texts: Texts
+  work: Work
 }
 
 export default class Add extends Component {
@@ -34,12 +35,23 @@ export default class Add extends Component {
       edit: false,
     },
     texts: { url: "", name: "" },
+    work: {
+      id: 0,
+      name: "",
+      url: "",
+      onair: false,
+      userId: 0,
+    },
   }
 
   handleClick = (key: string) => {
     const copyIsShown: IsShown = Object.assign({}, this.state.isShown)
     copyIsShown[key] = !copyIsShown[key]
     this.setState({ isShown: copyIsShown })
+  }
+
+  closeEditer = () => {
+    this.setState({ isShown: { add: false, edit: false } })
   }
 
   handleChange = (e: React.FormEvent<HTMLInputElement>): void => {
@@ -63,6 +75,10 @@ export default class Add extends Component {
     }
     const { OK, Query } = await api(url.getWork, newWork({ url: result }))
     if (OK) {
+      this.setState({
+        isShown: { add: false, edit: true },
+        work: Query as Work,
+      })
       set([`${Query.name}はすでに登録済みです`])
       return
     }
@@ -70,36 +86,14 @@ export default class Add extends Component {
     this.setState({
       isShown: { add: false, edit: true },
       texts: { url: result, title: "" },
+      work: newWork({ url: result }),
     })
-  }
-
-  save = async (set: Set) => {
-    const { name, url: wUrl } = this.state.texts
-    if (name.length === 0) {
-      set(["タイトルを入力して下さい"])
-      return
-    }
-
-    const { OK, Query } = await api(
-      url.addWork,
-      newWork({ name: name, url: wUrl })
-    )
-    if (!OK) {
-      set([Query])
-      return
-    }
-
-    this.setState({
-      isShown: { add: false, edit: false },
-      texts: { url: "", name: "" },
-    })
-
-    set([`${name}を保存しました`], true)
   }
 
   render() {
-    const { isShown, texts } = this.state
-    const { handleChange, handleClick, next, save } = this
+    const { isShown, texts, work } = this.state
+    const { handleChange, closeEditer, handleClick, next } = this
+
     return (
       <div>
         <FAB handleClick={handleClick} />
@@ -112,12 +106,7 @@ export default class Add extends Component {
           />
         ) : null}
         {isShown.edit ? (
-          <WorkEditer
-            name={texts.name}
-            url={texts.url}
-            handleChange={handleChange}
-            save={save}
-          />
+          <WorkEditer work={work} closeEditer={closeEditer} />
         ) : null}
       </div>
     )

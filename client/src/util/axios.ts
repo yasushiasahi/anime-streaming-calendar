@@ -21,7 +21,9 @@ export enum url {
   getService,
   getWorks,
   getWork,
+  updateWork,
   addWork,
+  addSchedule,
 }
 
 interface Table { }

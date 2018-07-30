@@ -67,9 +67,6 @@ func checkSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(r.Header["Cookie"])
-	fmt.Println(c.Value)
-
 	u := data.User{Token: c.Value}
 
 	if err = u.GetByToken(); err != nil {

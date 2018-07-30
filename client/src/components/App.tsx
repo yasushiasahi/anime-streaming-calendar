@@ -35,12 +35,15 @@ interface AppState {
 export interface Contxet {
   set: Set
   user: User
+  svs: Service[]
 }
 
 const u = newUser({})
+const svs = [newService()]
 const nullContext: Contxet = {
   set: (m: statusMessege, initFlag: boolean) => { },
   user: u,
+  svs: svs,
 }
 
 const { Provider, Consumer } = createContext(nullContext)
@@ -58,6 +61,7 @@ class App extends Component<{}, AppState, JSX.Element> {
         name: "",
         url: "",
         onair: false,
+        userId: 0,
         flag: false,
       },
     ],
@@ -102,10 +106,14 @@ class App extends Component<{}, AppState, JSX.Element> {
     const { OK: wkOK, Query: wkQuery } = await api(url.getWorks, {})
     if (wkOK) {
       const wkQ = wkQuery as Work[]
-      wks = wkQ.map((w) => {
-        w.flag = true
-        return w
-      })
+      if (wkQ !== null) {
+        wks = wkQ.map((w) => {
+          w.flag = true
+          return w
+        })
+      } else {
+        wks = []
+      }
     } else {
       m.push(wkQuery as string)
       wks = []
@@ -153,6 +161,7 @@ class App extends Component<{}, AppState, JSX.Element> {
     const { msg, svs, wks } = this.state
     const { ct, set, handleCheckBoxClick } = this
     this.ct.set = this.set
+    this.ct.svs = svs
 
     console.log("msg:", msg)
     console.log(" ct:", ct)
@@ -167,7 +176,7 @@ class App extends Component<{}, AppState, JSX.Element> {
             handleCheckBoxClick={handleCheckBoxClick}
           />
           <Calendar />
-          <Add />
+          {ct.user.id !== 0 ? <Add /> : null}
           <StatusMessege m={msg} set={set} />
         </GridContainer>
       </Provider>
