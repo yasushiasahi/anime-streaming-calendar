@@ -108,6 +108,7 @@ const CBWrapper = styled.label`
   }
 
   span {
+    white-space: nowrap;
     color: ${style.Color.FontDrak};
   }
 `

@@ -12,6 +12,7 @@ import {
   newService,
   Work,
   newWork,
+  Schedule,
 } from "../util/type/type"
 import User, { newUser } from "../util/type/user"
 
@@ -29,21 +30,24 @@ interface AppState {
   msg: statusMessege
   svs: Service[]
   wks: Work[]
-  [key: string]: statusMessege | Service[] | Work[]
+  sds: Schedule[]
 }
 
 export interface Contxet {
   set: Set
   user: User
   svs: Service[]
+  wks: Work[]
 }
 
 const u = newUser({})
 const svs = [newService()]
+const wks = [newWork({})]
 const nullContext: Contxet = {
   set: (m: statusMessege, initFlag: boolean) => { },
   user: u,
   svs: svs,
+  wks: wks,
 }
 
 const { Provider, Consumer } = createContext(nullContext)
@@ -65,6 +69,16 @@ class App extends Component<{}, AppState, JSX.Element> {
         flag: false,
       },
     ],
+    sds: [
+      {
+        id: 0,
+        dayOfWeek: 0,
+        url: "",
+        userId: 0,
+        workId: 0,
+        serviceId: 0,
+      },
+    ],
   }
 
   componentDidMount() {
@@ -76,6 +90,7 @@ class App extends Component<{}, AppState, JSX.Element> {
     let ct = this.ct
     let svs: Service[]
     let wks: Work[]
+    let sds: Schedule[]
 
     // ユーザーのログインを確認
     const { OK: uOK, Query: uQuery } = await api(url.checkSession, {})
@@ -119,10 +134,19 @@ class App extends Component<{}, AppState, JSX.Element> {
       wks = []
     }
 
+    const { OK: sdOK, Query: sdQuery } = await api(url.getSchedules, {})
+    if (sdOK) {
+      sds = sdQuery
+    } else {
+      sds = []
+      m.push(sdQuery)
+    }
+
     this.setState({
       msg: m,
       svs: svs,
       wks: wks,
+      sds: sds,
     })
   }
 
@@ -158,10 +182,11 @@ class App extends Component<{}, AppState, JSX.Element> {
   }
 
   render() {
-    const { msg, svs, wks } = this.state
+    const { msg, svs, wks, sds } = this.state
     const { ct, set, handleCheckBoxClick } = this
     this.ct.set = this.set
     this.ct.svs = svs
+    this.ct.wks = wks
 
     console.log("msg:", msg)
     console.log(" ct:", ct)
@@ -175,7 +200,7 @@ class App extends Component<{}, AppState, JSX.Element> {
             wks={wks}
             handleCheckBoxClick={handleCheckBoxClick}
           />
-          <Calendar />
+          <Calendar sds={sds} />
           {ct.user.id !== 0 ? <Add /> : null}
           <StatusMessege m={msg} set={set} />
         </GridContainer>

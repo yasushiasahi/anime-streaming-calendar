@@ -19,6 +19,7 @@ var Handle = map[string]func(http.ResponseWriter, *http.Request){
 	"addWork":      addWork,
 	"addSchedule":  addSchedule,
 	"updateWork":   updateWork,
+	"getSchedules": getSchedules,
 }
 
 type singlebody struct {

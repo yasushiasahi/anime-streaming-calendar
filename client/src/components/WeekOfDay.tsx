@@ -1,30 +1,15 @@
 import * as React from "react"
 import styled from "styled-components"
+import { C } from "./App"
 import { log } from "util"
 import style from "../util/style"
-import Icon, { I } from "./icon/Icon"
-// const schedules: Schedule[] = [
-//   { id: 1, name: "プラネット ウィズ", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 2, name: "あそびあそばせ", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 3, name: "邪神ちゃんドロップキック", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 4, name: "オーバーロードⅢ", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 5, name: "BANANA FISH", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 6, name: "バキ", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 7, name: "三星のスバル", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 8, name: "異世界魔王と召喚少女の奴隷魔術", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 9, name: "はねバド", service: [I.Netflix, I.Amazon, I.Danime] },
-//   { id: 10, name: "ちおちゃんの通学路", service: [I.Netflix, I.Amazon, I.Danime] },
-// ]
-
-interface Schedule {
-  id: number
-  name: string
-  service: number[]
-}
+import { Schedule, Work } from "../util/type/type"
+import Logo from "./icon/Logo"
 
 interface WODProps {
   dayNum: number
   dayStr: string
+  sds: Schedule[]
 }
 
 interface WProps {
@@ -33,29 +18,50 @@ interface WProps {
 
 const getIsToday = (date: number): boolean => new Date().getDate() === date
 
-const makeIcons = (ss: number[]): JSX.Element[] =>
-  ss.map((s) => <Icon key={s} i={s} />)
+interface Datas {
+  [key: number]: number[]
+}
 
-const makeScheduleBoxs = (ss: Schedule[]): JSX.Element[] =>
-  ss.map((s) => (
-    <ScheduleBox key={s.id}>
-      <span>{s.name}</span>
-      <div>{makeIcons(s.service)}</div>
-    </ScheduleBox>
-  ))
+const makeSceduleBoxs = (sds: Schedule[], wks: Work[]): JSX.Element[] => {
+  let datas: Datas = {}
+  let boxs: JSX.Element[] = []
 
-export default ({ dayStr, dayNum }: WODProps) => (
-  <Wrapper isToday={getIsToday(dayNum)}>
-    <DayWrapper>
-      <div>{dayStr}</div>
-      <div>{dayNum}</div>
-    </DayWrapper>
-    <Divider />
-    {/*
-      *<GridContainer>{makeScheduleBoxs(schedules)}</GridContainer>
-    */}
-  </Wrapper>
-)
+  for (const sd of sds) {
+    datas[sd.workId] = []
+  }
+  for (const sd of sds) {
+    datas[sd.workId].push(sd.serviceId)
+  }
+
+  for (const key in datas) {
+    const wk = wks.find((wk) => wk.id === parseInt(key))
+    const icons = datas[key].map((sdId) => <Logo key={sdId} i={sdId} />)
+    boxs.push(
+      <ScheduleBox key={key}>
+        <span>{wk.name}</span>
+        <div>{icons}</div>
+      </ScheduleBox>
+    )
+  }
+  return boxs
+}
+
+export default ({ dayStr, dayNum, sds }: WODProps) => {
+  return (
+    <C>
+      {({ wks }) => (
+        <Wrapper isToday={getIsToday(dayNum)}>
+          <DayWrapper>
+            <div>{dayStr}</div>
+            <div>{dayNum}</div>
+          </DayWrapper>
+          <Divider />
+          <GridContainer>{makeSceduleBoxs(sds, wks)}</GridContainer>
+        </Wrapper>
+      )}
+    </C>
+  )
+}
 
 const Wrapper = styled.div<WProps>`
   ${style.Props.Border("right")};

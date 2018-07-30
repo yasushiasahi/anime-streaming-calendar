@@ -2,6 +2,8 @@ import * as React from "react"
 import styled from "styled-components"
 import { log } from "util"
 import styles from "../util/style"
+import { Schedule } from "../util/type/type"
+
 import WeekOfDay from "./WeekOfDay"
 
 const getMonthLength = (month: number): number => {
@@ -55,23 +57,41 @@ const getWeek = (): number[] => {
     for (let i = 1; i < 8 - idx; i++) {
       newWeek.push(i)
     }
-    console.log(newWeek)
     week = week.slice(0, idx).concat(newWeek)
     return week
   }
   return week
 }
 
-const weekOfDays = getWeek().map((d, i) => (
-  <WeekOfDay key={d} dayNum={d} dayStr={["月", "火", "水", "木", "金", "土", "日"][i]} />
-))
+const weekOfDays = (sdsByWeek: Schedule[][]) =>
+  getWeek().map((d, i) => (
+    <WeekOfDay
+      key={d}
+      dayNum={d}
+      dayStr={["月", "火", "水", "木", "金", "土", "日"][i]}
+      sds={sdsByWeek[i]}
+    />
+  ))
 
-const Calendar = (): JSX.Element => (
-  <GridContainer>
-    <Divider />
-    {weekOfDays}
-  </GridContainer>
-)
+interface CProps {
+  sds: Schedule[]
+}
+
+export default ({ sds }: CProps): JSX.Element => {
+  let sdsByWeek: Schedule[][] = [[], [], [], [], [], [], []]
+  for (const sd of sds) {
+    sdsByWeek[sd.dayOfWeek].push(sd)
+  }
+  sdsByWeek.push([])
+  sdsByWeek = sdsByWeek.copyWithin(7, 0, 1).slice(1)
+
+  return (
+    <GridContainer>
+      <Divider />
+      {weekOfDays(sdsByWeek)}
+    </GridContainer>
+  )
+}
 
 const GridContainer = styled.div`
   grid-area: Calendar;
@@ -82,5 +102,3 @@ const GridContainer = styled.div`
 const Divider = styled.div`
   ${styles.Props.Border("right")};
 `
-
-export default Calendar
