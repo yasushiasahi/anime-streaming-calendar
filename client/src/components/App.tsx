@@ -162,7 +162,7 @@ class App extends Component<{}, AppState, JSX.Element> {
     id: number,
     key: string
   ): void => {
-    if ((key = "svs")) {
+    if (key === "svs") {
       const svs = this.state.svs.map((sv) => {
         if (sv.id === id) {
           sv.flag = e.target.checked
@@ -170,7 +170,7 @@ class App extends Component<{}, AppState, JSX.Element> {
         return sv
       })
       this.setState({ svs: svs })
-    } else if ((key = "wks")) {
+    } else if (key === "wks") {
       const wks = this.state.wks.map((wk) => {
         if (wk.id === id) {
           wk.flag = e.target.checked

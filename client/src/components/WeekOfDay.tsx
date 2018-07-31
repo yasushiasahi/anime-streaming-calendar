@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { C } from "./App"
 import { log } from "util"
 import style from "../util/style"
-import { Schedule, Work } from "../util/type/type"
+import { Schedule, Work, Service } from "../util/type/type"
 import Logo from "./icon/Logo"
 
 interface WODProps {
@@ -22,7 +22,18 @@ interface Datas {
   [key: number]: number[]
 }
 
-const makeSceduleBoxs = (sds: Schedule[], wks: Work[]): JSX.Element[] => {
+const makeLogos = (svIds: number[], svs: Service[]): JSX.Element[] => {
+  return svIds.map((svId) => {
+    const sv = svs.find((sv) => sv.id === svId)
+    return sv.flag ? <Logo key={svId} i={svId} /> : null
+  })
+}
+
+const makeSceduleBoxs = (
+  sds: Schedule[],
+  wks: Work[],
+  svs: Service[]
+): JSX.Element[] => {
   let datas: Datas = {}
   let boxs: JSX.Element[] = []
 
@@ -35,28 +46,31 @@ const makeSceduleBoxs = (sds: Schedule[], wks: Work[]): JSX.Element[] => {
 
   for (const key in datas) {
     const wk = wks.find((wk) => wk.id === parseInt(key))
-    const icons = datas[key].map((sdId) => <Logo key={sdId} i={sdId} />)
-    boxs.push(
-      <ScheduleBox key={key}>
-        <span>{wk.name}</span>
-        <div>{icons}</div>
-      </ScheduleBox>
-    )
+    const logos = makeLogos(datas[key], svs)
+    if (wk.flag && logos[0] !== null) {
+      boxs.push(
+        <ScheduleBox key={key}>
+          <span>{wk.name}</span>
+          <div>{logos}</div>
+        </ScheduleBox>
+      )
+    }
   }
+
   return boxs
 }
 
 export default ({ dayStr, dayNum, sds }: WODProps) => {
   return (
     <C>
-      {({ wks }) => (
+      {({ wks, svs }) => (
         <Wrapper isToday={getIsToday(dayNum)}>
           <DayWrapper>
             <div>{dayStr}</div>
             <div>{dayNum}</div>
           </DayWrapper>
           <Divider />
-          <GridContainer>{makeSceduleBoxs(sds, wks)}</GridContainer>
+          <GridContainer>{makeSceduleBoxs(sds, wks, svs)}</GridContainer>
         </Wrapper>
       )}
     </C>
