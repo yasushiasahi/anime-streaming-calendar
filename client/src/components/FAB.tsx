@@ -29,6 +29,7 @@ injectGlobal`
   position: absolute;
   bottom: 30px;
   right: 20px;
+  cursor:pointer;
 
   &:hover {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),

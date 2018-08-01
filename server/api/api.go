@@ -10,16 +10,17 @@ import (
 
 // Handle is functions set which handle apis
 var Handle = map[string]func(http.ResponseWriter, *http.Request){
-	"signin":       signin,
-	"login":        login,
-	"checkSession": checkSession,
-	"getService":   getService,
-	"getWorks":     getWorks,
-	"getWork":      getWork,
-	"addWork":      addWork,
-	"addSchedule":  addSchedule,
-	"updateWork":   updateWork,
-	"getSchedules": getSchedules,
+	"signin":                 signin,
+	"login":                  login,
+	"checkSession":           checkSession,
+	"getService":             getService,
+	"getWorks":               getWorks,
+	"getWork":                getWork,
+	"addWork":                addWork,
+	"addSchedule":            addSchedule,
+	"updateWork":             updateWork,
+	"getSchedules":           getSchedules,
+	"getSchedulesJoinedWork": getSchedulesJoinedWork,
 }
 
 type singlebody struct {

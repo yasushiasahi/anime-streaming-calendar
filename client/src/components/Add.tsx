@@ -132,23 +132,25 @@ export default class Add extends Component {
       handleSelectChange,
     } = this
 
+    const addPre = (
+      <AddPre
+        url={texts.url}
+        handleChange={handleChange}
+        handleClick={handleClick}
+        next={next}
+        isAddWork={isShown.addWork}
+        selectValue={selectValue}
+        handleSelectChange={handleSelectChange}
+      />
+    )
+
+    const editer = <WorkEditer work={work} closeEditer={closeEditer} />
+
     return (
       <div>
         <FAB handleClick={handleClick} />
-        {isShown.add ? (
-          <AddPre
-            url={texts.url}
-            handleChange={handleChange}
-            handleClick={handleClick}
-            next={next}
-            isAddWork={isShown.addWork}
-            selectValue={selectValue}
-            handleSelectChange={handleSelectChange}
-          />
-        ) : null}
-        {isShown.edit ? (
-          <WorkEditer work={work} closeEditer={closeEditer} />
-        ) : null}
+        {isShown.add ? addPre : null}
+        {isShown.edit ? editer : null}
       </div>
     )
   }

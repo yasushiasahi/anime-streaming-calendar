@@ -12,8 +12,10 @@ import {
   newSchedule,
 } from "../util/type/type"
 import User from "../util/type/user"
+import { getDay } from "./helper"
 import { C } from "./App"
 import Icon, { I } from "./icon/Icon"
+import Logo from "./icon/Logo"
 import { log } from "util"
 import InputText from "./InputText"
 import axios from "axios"
@@ -33,6 +35,13 @@ interface Selects {
   [key: string]: number
 }
 
+interface WJS {
+  svId: number
+  svName: string
+  DOW: number
+  sdUrl: string
+}
+
 interface WEProps {
   work: Work
   closeEditer: () => void
@@ -42,6 +51,7 @@ interface WPState {
   selects: Selects
   texts: Texts
   isAddSchedule: boolean
+  wjss: WJS[]
 }
 
 const makeServiceOptions = (svs: Service[]) => {
@@ -70,7 +80,23 @@ export default class WorkEditer extends Component<
         sUrl: "",
       },
       isAddSchedule: false,
+      wjss: null,
     }
+  }
+
+  componentDidMount() {
+    this.init()
+  }
+
+  init = async () => {
+    if (this.props.work.id === 0) {
+      return
+    }
+    const { OK, Query } = await api(url.getSchedulesJoinedWork, this.props.work)
+    if (!OK) {
+      return
+    }
+    this.setState({ wjss: Query })
   }
 
   handleClick = () => {
@@ -99,7 +125,6 @@ export default class WorkEditer extends Component<
     let m: statusMessege = []
 
     if (work.id === 0) {
-      console.log("111111111111111111111")
       if (name.length === 0) {
         m.push("タイトルを入力して下さい")
         return
@@ -116,7 +141,6 @@ export default class WorkEditer extends Component<
     }
 
     if (work.name !== name) {
-      console.log("2222222222222222222222222222")
       if (name.length === 0) {
         m.push("タイトルを入力して下さい")
         return
@@ -132,7 +156,6 @@ export default class WorkEditer extends Component<
     }
 
     if (isAddSchedule) {
-      console.log("3333333333333333333333333333")
       if (sUrl.length === 0) {
         m.push("配信サービス上の作品URLを入力して下さい")
         return
@@ -155,7 +178,6 @@ export default class WorkEditer extends Component<
       }
     }
 
-    console.log("4444444444444444444444444444444")
     if (m.length === 0) {
       set(["データを更新しました"], true)
       this.props.closeEditer()
@@ -169,12 +191,68 @@ export default class WorkEditer extends Component<
       selects: { dayOfWeek, serviceId },
       texts: { name, wUrl, sUrl },
       isAddSchedule,
+      wjss,
     } = this.state
     const { handleClick, handleChange, handleSelectChange, save } = this
+
+    const addSchedule = (
+      <AddSchedule>
+        <div>
+          <div>曜日</div>
+          <select
+            name="dayOfWeek"
+            value={dayOfWeek}
+            onChange={handleSelectChange}>
+            <option value={1}>月曜日</option>
+            <option value={2}>火曜日</option>
+            <option value={3}>水曜日</option>
+            <option value={4}>木曜日</option>
+            <option value={5}>金曜日</option>
+            <option value={6}>土曜日</option>
+            <option value={0}>日曜日</option>
+          </select>
+        </div>
+        <div>
+          <div>配信サービス</div>
+          <C>
+            {({ svs }) => (
+              <select
+                name="serviceId"
+                value={serviceId}
+                onChange={handleSelectChange}>
+                {makeServiceOptions(svs)}
+              </select>
+            )}
+          </C>
+        </div>
+        <Input
+          type="text"
+          name="sUrl"
+          value={sUrl}
+          placeholder="配信サービス上の作品URL"
+          onChange={(e) => handleChange(e)}
+        />
+      </AddSchedule>
+    )
+
+    const schedules =
+      wjss &&
+      wjss.map((wjs, i) => (
+        <li key={i}>
+          {getDay(wjs.DOW)}
+          <a href={wjs.sdUrl} rel="noopener noreferrer" target="_blank">
+            <Logo i={wjs.svId} />
+            {wjs.svName}
+          </a>
+        </li>
+      ))
+
     return (
       <Wrapper>
         <WorkAria>
-          <Icon i={I.Close} />
+          <HoverCloce onClick={this.props.closeEditer}>
+            <Icon i={I.Close} />
+          </HoverCloce>
           <Title>
             <Input
               type="text"
@@ -206,50 +284,31 @@ export default class WorkEditer extends Component<
             <Icon i={isAddSchedule ? I.Close : I.Add} />
           </Hover>
           <Span>{isAddSchedule ? "キャンセル" : "スケジュールを追加"}</Span>
-          {isAddSchedule ? (
-            <AddSchedule>
-              <div>
-                <div>曜日</div>
-                <select
-                  name="dayOfWeek"
-                  value={dayOfWeek}
-                  onChange={handleSelectChange}>
-                  <option value={1}>月曜日</option>
-                  <option value={2}>火曜日</option>
-                  <option value={3}>水曜日</option>
-                  <option value={4}>木曜日</option>
-                  <option value={5}>金曜日</option>
-                  <option value={6}>土曜日</option>
-                  <option value={0}>日曜日</option>
-                </select>
-              </div>
-              <div>
-                <div>配信サービス</div>
-                <C>
-                  {({ svs }) => (
-                    <select
-                      name="serviceId"
-                      value={serviceId}
-                      onChange={handleSelectChange}>
-                      {makeServiceOptions(svs)}
-                    </select>
-                  )}
-                </C>
-              </div>
-              <Input
-                type="text"
-                name="sUrl"
-                value={sUrl}
-                placeholder="配信サービス上の作品URL"
-                onChange={(e) => handleChange(e)}
-              />
-            </AddSchedule>
-          ) : null}
+          {isAddSchedule ? addSchedule : null}
+          <ScheduleList>{schedules}</ScheduleList>
         </ScheduleArea>
       </Wrapper>
     )
   }
 }
+
+const ScheduleList = styled.ul`
+  list-style: none;
+  font-size: 1rem;
+
+  li {
+    margin-bottom: 1rem;
+
+    a {
+      margin-left: 0.2rem;
+      img[alt$="ロゴ"] {
+        height: 1rem;
+        width: 1rem;
+        margin-left: 1rem;
+      }
+    }
+  }
+`
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -265,12 +324,6 @@ const WorkAria = styled.div`
   display: flex;
   ${style.Props.Border("bottom")};
   padding: 15px;
-  img {
-    margin-top: 15px;
-    margin-left: 10px;
-    width: 1rem;
-    height: 1rem;
-  }
 `
 
 const ScheduleArea = styled.div`
@@ -308,6 +361,11 @@ const Hover = styled.div`
   }
 `
 
+const HoverCloce = Hover.extend`
+  margin-top: 10px;
+  margin-left: 10px;
+`
+
 const Title = styled.div`
   margin-left: 30px;
 
@@ -324,14 +382,6 @@ const Title = styled.div`
     }
   }
 `
-// input {
-//   width: 50vw;
-//   height: 2.5rem;
-//   background-color: ${style.Color.BGGray};
-//   border: none;
-//   font-size: 1.2rem;
-//   outline: 0;
-// }
 
 const Input = styled.input`
   width: 50vw;

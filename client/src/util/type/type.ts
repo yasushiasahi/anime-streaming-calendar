@@ -34,7 +34,7 @@ export const newWork = ({
   userId = 0,
 }): Work => {
   const w: Work = {
-    id: 0,
+    id: id,
     name: name,
     url: url,
     onair: onair,

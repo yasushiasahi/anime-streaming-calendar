@@ -57,3 +57,46 @@ func GetSchedules() (sds []Schedule, err error) {
 
 	return
 }
+
+// WorkJoinedSchedule joined works, services, schedule
+type WorkJoinedSchedule struct {
+	SvID   int    `json:"svId"`
+	SvName string `json:"svName"`
+	DOW    int    `json:"DOW"`
+	SdURL  string `json:"sdUrl"`
+}
+
+// GetWorkJoinedSchedules ...
+func GetWorkJoinedSchedules(wkID int) (wjss []WorkJoinedSchedule, err error) {
+	rows, err := Db.Query(`
+        select
+                services.id,
+                services.name,
+                schedules.day_of_week,
+                schedules.url
+        from works
+        left join schedules ON works.id = schedules.work_id
+        left join services ON schedules.service_id = services.id
+        where work_id = ?;
+    `, wkID)
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		wjs := WorkJoinedSchedule{}
+		err = rows.Scan(
+			&wjs.SvID,
+			&wjs.SvName,
+			&wjs.DOW,
+			&wjs.SdURL,
+		)
+		if err != nil {
+			return
+		}
+		wjss = append(wjss, wjs)
+	}
+	rows.Close()
+
+	return
+}
