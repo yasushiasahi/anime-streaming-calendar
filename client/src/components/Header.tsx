@@ -16,6 +16,10 @@ import InputText from "./InputText"
 import { checkServerIdentity } from "tls"
 import { log } from "util"
 
+interface HProps {
+  toggleSidebar: () => void
+}
+
 interface HState {
   inputText: InputText
   isShown: IsShown
@@ -34,10 +38,13 @@ export interface InputText {
   [key: string]: string
 }
 
-export default class extends React.Component<{}, HState, JSX.Element> {
-  state = {
-    inputText: { name: "", pass: "", passRe: "" },
-    isShown: { login: false, signin: false },
+export default class extends React.Component<HProps, HState, JSX.Element> {
+  constructor(props: HProps) {
+    super(props)
+    this.state = {
+      inputText: { name: "", pass: "", passRe: "" },
+      isShown: { login: false, signin: false },
+    }
   }
 
   handleClick = (key: string): void => {
@@ -122,7 +129,7 @@ export default class extends React.Component<{}, HState, JSX.Element> {
     return (
       <FlexWrappar>
         <LeftFlexContainer>
-          <Hover>
+          <Hover onClick={this.props.toggleSidebar}>
             <Icon i={I.Menu} />
           </Hover>
           <Icon i={I.Logo} />

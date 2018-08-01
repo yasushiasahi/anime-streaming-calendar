@@ -31,6 +31,7 @@ interface AppState {
   svs: Service[]
   wks: Work[]
   sds: Schedule[]
+  isSidebarShown: boolean
 }
 
 export interface Contxet {
@@ -79,10 +80,15 @@ class App extends Component<{}, AppState, JSX.Element> {
         serviceId: 0,
       },
     ],
+    isSidebarShown: true,
   }
 
   componentDidMount() {
     this.init([])
+  }
+
+  toggleSidebar = () => {
+    this.setState({ isSidebarShown: !this.state.isSidebarShown })
   }
 
   init = async (m: statusMessege) => {
@@ -178,8 +184,8 @@ class App extends Component<{}, AppState, JSX.Element> {
   }
 
   render() {
-    const { msg, svs, wks, sds } = this.state
-    const { ct, set, handleCheckBoxClick } = this
+    const { msg, svs, wks, sds, isSidebarShown } = this.state
+    const { ct, set, handleCheckBoxClick, toggleSidebar } = this
     this.ct.set = this.set
     this.ct.svs = svs
     this.ct.wks = wks
@@ -187,15 +193,15 @@ class App extends Component<{}, AppState, JSX.Element> {
     console.log("msg:", msg)
     console.log(" ct:", ct)
 
+    const sidebar = (
+      <Sidebar svs={svs} wks={wks} handleCheckBoxClick={handleCheckBoxClick} />
+    )
+
     return (
       <Provider value={ct}>
-        <GridContainer>
-          <Header />
-          <Sidebar
-            svs={svs}
-            wks={wks}
-            handleCheckBoxClick={handleCheckBoxClick}
-          />
+        <GridContainer isSidebarShown={isSidebarShown}>
+          <Header toggleSidebar={toggleSidebar} />
+          {isSidebarShown ? sidebar : null}
           <Calendar sds={sds} />
           {ct.user.id !== 0 ? <Add /> : null}
           <StatusMessege m={msg} set={set} />
@@ -205,15 +211,32 @@ class App extends Component<{}, AppState, JSX.Element> {
   }
 }
 
-const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: ${style.Size.SidebarWidth} auto;
-  grid-template-rows: ${style.Size.HeaderHeight} auto;
-  grid-template-areas:
-    "Header   Header"
-    "Sidebar  Calendar";
+interface GCProps {
+  isSidebarShown: boolean
+}
 
+const GridContainer = styled.div<GCProps>`
+  display: grid;
   position: relative;
+  ${(p) => {
+    if (p.isSidebarShown) {
+      return `
+        grid-template-columns: ${style.Size.SidebarWidth} auto;
+        grid-template-rows: ${style.Size.HeaderHeight} auto;
+        grid-template-areas:
+          "Header   Header"
+          "Sidebar  Calendar";
+      `
+    } else {
+      return `
+        grid-template-columns: auto;
+        grid-template-rows: ${style.Size.HeaderHeight} auto;
+        grid-template-areas:
+          "Header"
+          "Calendar";
+      `
+    }
+  }};
 `
 
 export default hot(module)(App)
