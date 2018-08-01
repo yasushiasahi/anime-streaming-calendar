@@ -23,10 +23,14 @@ interface Datas {
 }
 
 const makeLogos = (svIds: number[], svs: Service[]): JSX.Element[] => {
-  return svIds.map((svId) => {
+  const logos: JSX.Element[] = []
+  for (const svId of svIds) {
     const sv = svs.find((sv) => sv.id === svId)
-    return sv.flag ? <Logo key={svId} i={svId} /> : null
-  })
+    if (sv.flag) {
+      logos.push(<Logo key={svId} i={svId} />)
+    }
+  }
+  return logos
 }
 
 const makeSceduleBoxs = (
@@ -47,7 +51,7 @@ const makeSceduleBoxs = (
   for (const key in datas) {
     const wk = wks.find((wk) => wk.id === parseInt(key))
     const logos = makeLogos(datas[key], svs)
-    if (wk.flag && logos[0] !== null) {
+    if (wk.flag && logos.length !== 0) {
       boxs.push(
         <ScheduleBox key={key}>
           <span>{wk.name}</span>

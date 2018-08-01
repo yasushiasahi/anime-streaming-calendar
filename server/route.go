@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -24,7 +23,7 @@ func send404(w http.ResponseWriter) {
 }
 
 func sendStaticFiles(w http.ResponseWriter, r *http.Request) {
-	ps := "../dist"
+	ps := "./dist"
 	rp := r.URL.Path
 
 	if rp == "/" {
@@ -39,7 +38,8 @@ func sendStaticFiles(w http.ResponseWriter, r *http.Request) {
 
 	bs, err := ioutil.ReadFile(ps)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusBadGateway)
+		return
 	}
 
 	w.Write(bs)

@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 
 const Props = {
   Border: (side: string): string => {
@@ -26,18 +26,37 @@ const Color = {
 
 interface BP {
   blue?: any
+  white?: any
 }
 
 const SC = {
   Button: styled.span<BP>`
     display: inline-block;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     border-radius: 2px;
     background-color: ;
     border: 1px solid #c6c6c6;
-    background-color: ${(p) => (p.blue ? Color.Blue : "#f8f8f8")};
-    color: ${(p) => (p.blue ? Color.BGWhite : Color.FontNormal)};
+    ${(p) => {
+      if (p.blue !== undefined) {
+        return `
+          background-color: ${Color.Blue};
+          color: ${Color.BGWhite};
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        `
+      } else if (p.white !== undefined) {
+        return `
+          background-color: ${Color.BGWhite};
+          color: ${Color.Blue};
+          border: 0.5px solid ${Color.Blue};
+        `
+      } else {
+        return `
+          background-color: "#f8f8f8";
+          color: ${Color.FontNormal};
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        `
+      }
+    }};
   `,
 }
 

@@ -2,7 +2,7 @@
 node_modules
 
 # production
-/dist
+server/dist
 
 # misc
 .DS_Store
@@ -11,3 +11,4 @@ GRTAGS
 GTAGS
 
 server/server
+server/app.yaml

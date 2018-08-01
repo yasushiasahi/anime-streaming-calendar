@@ -2,14 +2,16 @@ const path = require("path")
 const webpack = require("webpack")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
+const distPath = path.join(__dirname, "../server/dist")
+
 module.exports = {
   mode: "development",
   devtool: "source-map",
   output: {
-    path: path.join(__dirname, "../dist"),
+    path: distPath,
   },
   devServer: {
-    contentBase: "../dist",
+    contentBase: distPath,
     open: true,
     port: 8080,
     proxy: {
@@ -18,15 +20,6 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   test: /\.tsx?$/,
-      //   enforce: "pre",
-      //   use: [
-      //     {
-      //       loader: "tslint-loader",
-      //     },
-      //   ],
-      // },
       {
         test: /\.tsx?$/,
         use: ["awesome-typescript-loader", "stylelint-custom-processor-loader"],
@@ -59,7 +52,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: "アニメ ストリーミング カレンダー",
-      meta: { viewport: "width=device-width, initial-scale=1, shrink-to-fit=no" },
+      meta: {
+        viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
+      },
       favicon: "src/favicon.ico",
     }),
     new webpack.NamedModulesPlugin(),

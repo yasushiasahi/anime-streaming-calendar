@@ -1,6 +1,9 @@
 import { statusMessege } from "../util/type/type"
 import { InputText } from "./Header"
 
+/*
+ * Login Signin
+ */
 export const isValid = (
   { name, pass, passRe }: InputText,
   isSignin: boolean = false

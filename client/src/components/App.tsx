@@ -82,11 +82,10 @@ class App extends Component<{}, AppState, JSX.Element> {
   }
 
   componentDidMount() {
-    this.init()
+    this.init([])
   }
 
-  init = async () => {
-    let m: statusMessege = []
+  init = async (m: statusMessege) => {
     let ct = this.ct
     let svs: Service[]
     let wks: Work[]
@@ -96,11 +95,7 @@ class App extends Component<{}, AppState, JSX.Element> {
     const { OK: uOK, Query: uQuery } = await api(url.checkSession, {})
     if (uOK) {
       ct.user = uQuery as User
-      m.push("ログインしました")
     } else {
-      if (ct.user.id !== 0) {
-        m.push("ログアウトしました")
-      }
       ct.user = newUser({})
     }
 
@@ -151,9 +146,10 @@ class App extends Component<{}, AppState, JSX.Element> {
   }
 
   set = (m: statusMessege, initFlag: boolean = false): void => {
-    this.setState({ msg: m })
     if (initFlag) {
-      this.init()
+      this.init(m)
+    } else {
+      this.setState({ msg: m })
     }
   }
 

@@ -26,6 +26,7 @@ interface AState {
   isShown: IsShown
   texts: Texts
   work: Work
+  selectValue: number
 }
 
 export default class Add extends Component {
@@ -33,6 +34,7 @@ export default class Add extends Component {
     isShown: {
       add: false,
       edit: false,
+      addWork: false,
     },
     texts: { url: "", name: "" },
     work: {
@@ -42,12 +44,17 @@ export default class Add extends Component {
       onair: false,
       userId: 0,
     },
+    selectValue: -1,
   }
 
   handleClick = (key: string) => {
     const copyIsShown: IsShown = Object.assign({}, this.state.isShown)
     copyIsShown[key] = !copyIsShown[key]
     this.setState({ isShown: copyIsShown })
+  }
+
+  handleSelectChange = (e: React.FormEvent<HTMLSelectElement>): void => {
+    this.setState({ selectValue: parseInt(e.currentTarget.value) })
   }
 
   closeEditer = () => {
@@ -60,7 +67,15 @@ export default class Add extends Component {
     this.setState({ texts: copyTexts })
   }
 
-  next = async (set: Set) => {
+  next = async (set: Set, wks: Work[]) => {
+    if (this.state.isShown.addWork) {
+      this.nextNewWork(set)
+    } else {
+      this.nextSelectedWork(set, wks)
+    }
+  }
+
+  nextNewWork = async (set: Set) => {
     const wUrl = this.state.texts.url
     if (wUrl.length === 0) {
       set(["入力が空です"])
@@ -90,9 +105,32 @@ export default class Add extends Component {
     })
   }
 
+  nextSelectedWork = (set: Set, wks: Work[]) => {
+    const selectValue = this.state.selectValue
+    if (selectValue === -1) {
+      set(["作品が選択されていません"])
+      return
+    }
+
+    const work = wks.find((wk) => wk.id === selectValue)
+
+    this.setState({
+      isShown: { add: false, edit: true },
+      texts: { url: "", title: "" },
+      selectValue: -1,
+      work: work,
+    })
+  }
+
   render() {
-    const { isShown, texts, work } = this.state
-    const { handleChange, closeEditer, handleClick, next } = this
+    const { isShown, texts, work, selectValue } = this.state
+    const {
+      handleChange,
+      closeEditer,
+      handleClick,
+      next,
+      handleSelectChange,
+    } = this
 
     return (
       <div>
@@ -103,6 +141,9 @@ export default class Add extends Component {
             handleChange={handleChange}
             handleClick={handleClick}
             next={next}
+            isAddWork={isShown.addWork}
+            selectValue={selectValue}
+            handleSelectChange={handleSelectChange}
           />
         ) : null}
         {isShown.edit ? (
