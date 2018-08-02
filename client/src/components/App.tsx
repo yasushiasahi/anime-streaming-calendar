@@ -13,6 +13,7 @@ import {
   Work,
   newWork,
   Schedule,
+  SSBW,
 } from "../util/type/type"
 import User, { newUser } from "../util/type/user"
 
@@ -24,6 +25,7 @@ import AddPre from "./AddPre"
 import WorkEditer from "./WorkEditer"
 import StatusMessege from "./StatusMessege"
 import Add from "./Add"
+import Ditail from "./Ditail"
 import { log } from "util"
 
 interface AppState {
@@ -31,7 +33,15 @@ interface AppState {
   svs: Service[]
   wks: Work[]
   sds: Schedule[]
+  ssbws: SSBW[]
   isSidebarShown: boolean
+  ditailInfo: {
+    left: number
+    right: number
+    top: number
+    wkId: number
+    DOW: number
+  }
 }
 
 export interface Contxet {
@@ -39,6 +49,11 @@ export interface Contxet {
   user: User
   svs: Service[]
   wks: Work[]
+  showDitail: (
+    e: React.MouseEvent<HTMLDivElement>,
+    wkId: number,
+    DOW: number
+  ) => void
 }
 
 const u = newUser({})
@@ -49,6 +64,7 @@ const nullContext: Contxet = {
   user: u,
   svs: svs,
   wks: wks,
+  showDitail: null,
 }
 
 const { Provider, Consumer } = createContext(nullContext)
@@ -56,31 +72,35 @@ export const C = Consumer
 
 class App extends Component<{}, AppState, JSX.Element> {
   ct: Contxet = nullContext
-
-  state = {
-    msg: [""],
-    svs: [{ id: 0, name: "", url: "", flag: false }],
-    wks: [
-      {
-        id: 0,
-        name: "",
-        url: "",
-        onair: false,
-        userId: 0,
-        flag: false,
-      },
-    ],
-    sds: [
-      {
-        id: 0,
-        dayOfWeek: 0,
-        url: "",
-        userId: 0,
-        workId: 0,
-        serviceId: 0,
-      },
-    ],
-    isSidebarShown: true,
+  constructor(props: any) {
+    super(props)
+    this.state = {
+      msg: [""],
+      svs: [{ id: 0, name: "", url: "", flag: false }],
+      wks: [
+        {
+          id: 0,
+          name: "",
+          url: "",
+          onair: false,
+          userId: 0,
+          flag: false,
+        },
+      ],
+      sds: [
+        {
+          id: 0,
+          dayOfWeek: 0,
+          url: "",
+          userId: 0,
+          workId: 0,
+          serviceId: 0,
+        },
+      ],
+      ssbws: null,
+      isSidebarShown: true,
+      ditailInfo: { left: 0, right: 0, top: 0, wkId: 0, DOW: -1 },
+    }
   }
 
   componentDidMount() {
@@ -96,6 +116,7 @@ class App extends Component<{}, AppState, JSX.Element> {
     let svs: Service[]
     let wks: Work[]
     let sds: Schedule[]
+    let ssbws: SSBW[]
 
     // ユーザーのログインを確認
     const { OK: uOK, Query: uQuery } = await api(url.checkSession, {})
@@ -143,11 +164,22 @@ class App extends Component<{}, AppState, JSX.Element> {
       m.push(sdQuery)
     }
 
+    const { OK: ssbwsOK, Query: ssbwsQuery } = await api(
+      url.getServiceScheduleByWorks,
+      {}
+    )
+    if (ssbwsOK) {
+      ssbws = ssbwsQuery
+    } else {
+      m.push(ssbwsQuery)
+    }
+
     this.setState({
       msg: m,
       svs: svs,
       wks: wks,
       sds: sds,
+      ssbws: ssbws,
     })
   }
 
@@ -183,15 +215,43 @@ class App extends Component<{}, AppState, JSX.Element> {
     }
   }
 
-  render() {
-    const { msg, svs, wks, sds, isSidebarShown } = this.state
-    const { ct, set, handleCheckBoxClick, toggleSidebar } = this
-    this.ct.set = this.set
-    this.ct.svs = svs
-    this.ct.wks = wks
+  showDitail = (
+    e: React.MouseEvent<HTMLDivElement>,
+    wkId: number,
+    DOW: number
+  ): void => {
+    const copyDitailInfo = Object.assign({}, this.state.ditailInfo)
+    copyDitailInfo.left = e.currentTarget.getBoundingClientRect().left
+    copyDitailInfo.right = e.currentTarget.getBoundingClientRect().right
+    copyDitailInfo.top = e.currentTarget.getBoundingClientRect().top
+    copyDitailInfo.wkId = wkId
+    copyDitailInfo.DOW = DOW
+    this.setState({ ditailInfo: copyDitailInfo })
+  }
 
-    console.log("msg:", msg)
-    console.log(" ct:", ct)
+  closeDitail = () =>
+    this.setState({
+      ditailInfo: { left: 0, right: 0, top: 0, wkId: 0, DOW: -1 },
+    })
+
+  render() {
+    const { msg, svs, wks, sds, ssbws, isSidebarShown, ditailInfo } = this.state
+    const {
+      ct,
+      set,
+      handleCheckBoxClick,
+      toggleSidebar,
+      showDitail,
+      closeDitail,
+    } = this
+    ct.set = this.set
+    ct.svs = svs
+    ct.wks = wks
+    ct.wks = wks
+    ct.showDitail = showDitail
+
+    // console.log("msg:", msg)
+    // console.log(" ct:", ct)
 
     const sidebar = (
       <Sidebar svs={svs} wks={wks} handleCheckBoxClick={handleCheckBoxClick} />
@@ -204,6 +264,7 @@ class App extends Component<{}, AppState, JSX.Element> {
           {isSidebarShown ? sidebar : null}
           <Calendar sds={sds} />
           {ct.user.id !== 0 ? <Add /> : null}
+          <Ditail info={ditailInfo} ssbws={ssbws} closeDitail={closeDitail} />
           <StatusMessege m={msg} set={set} />
         </GridContainer>
       </Provider>

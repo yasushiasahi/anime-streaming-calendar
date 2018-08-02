@@ -100,3 +100,27 @@ func GetWorkJoinedSchedules(wkID int) (wjss []WorkJoinedSchedule, err error) {
 
 	return
 }
+
+// ServiceScheduleByWork ...
+type ServiceScheduleByWork struct {
+	Work  `json:"work"`
+	SdSvs []WorkJoinedSchedule `json:"sdsvs"`
+}
+
+// MakeServiceScheduleByWorks ...
+func MakeServiceScheduleByWorks() (ssbws []ServiceScheduleByWork, err error) {
+	wks, err := GetWorks()
+	if err != nil {
+		return
+	}
+
+	for _, wk := range wks {
+		sdsvs, err := GetWorkJoinedSchedules(wk.ID)
+		if err != nil {
+			break
+		}
+		ssbw := ServiceScheduleByWork{Work: wk, SdSvs: sdsvs}
+		ssbws = append(ssbws, ssbw)
+	}
+	return
+}

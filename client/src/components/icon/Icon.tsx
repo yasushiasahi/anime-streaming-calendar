@@ -6,6 +6,7 @@ import * as add from "./add.svg"
 import * as addW from "./add_white.svg"
 import * as down from "./down.svg"
 import * as close from "./close.svg"
+import * as closeW from "./close_white.svg"
 import * as login from "./login.svg"
 import * as logo from "./logo.svg"
 import * as logoTypo from "./logo_typo.svg"
@@ -18,6 +19,7 @@ const svgs = [
   add,
   addW,
   close,
+  closeW,
   down,
   login,
   logo,
@@ -32,6 +34,7 @@ export enum I {
   Add,
   AddW,
   Close,
+  CloseW,
   Down,
   Login,
   Logo,

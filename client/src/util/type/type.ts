@@ -70,3 +70,15 @@ export const newSchedule = ({
   }
   return sd
 }
+
+export interface WJS {
+  svId: number
+  svName: string
+  DOW: number
+  sdUrl: string
+}
+
+export interface SSBW {
+  work: Work
+  sdsvs: WJS[]
+}

@@ -23,6 +23,7 @@ export default ({ sds }: CProps): JSX.Element => {
       key={d}
       dayNum={d}
       dayStr={["月", "火", "水", "木", "金", "土", "日"][i]}
+      DOW={i}
       sds={sdsByWeek[i]}
     />
   ))

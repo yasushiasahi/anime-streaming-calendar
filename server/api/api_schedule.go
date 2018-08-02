@@ -74,3 +74,23 @@ func getSchedulesJoinedWork(w http.ResponseWriter, r *http.Request) {
 		errorRespons(w, "jsonのエンコードに失敗"+err.Error())
 	}
 }
+
+type ssbwBody struct {
+	OK    bool
+	Query []data.ServiceScheduleByWork
+}
+
+func getServiceScheduleByWorks(w http.ResponseWriter, h *http.Request) {
+	ssbws, err := data.MakeServiceScheduleByWorks()
+	if err != nil {
+		errorRespons(w, "データの作成に失敗")
+		return
+	}
+
+	b := ssbwBody{OK: true, Query: ssbws}
+	e := json.NewEncoder(w)
+	err = e.Encode(b)
+	if err != nil {
+		errorRespons(w, "jsonのエンコードに失敗"+err.Error())
+	}
+}

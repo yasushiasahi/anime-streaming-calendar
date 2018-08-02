@@ -26,6 +26,7 @@ export enum url {
   addSchedule,
   getSchedules,
   getSchedulesJoinedWork,
+  getServiceScheduleByWorks,
 }
 
 interface Table { }

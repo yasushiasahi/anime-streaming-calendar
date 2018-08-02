@@ -9,6 +9,7 @@ import Logo from "./icon/Logo"
 interface WODProps {
   dayNum: number
   dayStr: string
+  DOW: number
   sds: Schedule[]
 }
 
@@ -33,51 +34,58 @@ const makeLogos = (svIds: number[], svs: Service[]): JSX.Element[] => {
   return logos
 }
 
-const makeSceduleBoxs = (
-  sds: Schedule[],
-  wks: Work[],
-  svs: Service[]
-): JSX.Element[] => {
-  let datas: Datas = {}
-  let boxs: JSX.Element[] = []
+export default ({ dayStr, dayNum, sds, DOW }: WODProps) => {
+  const makeSceduleBoxs = (
+    sds: Schedule[],
+    wks: Work[],
+    svs: Service[],
+    showDitail: (
+      e: React.MouseEvent<HTMLDivElement>,
+      wkId: number,
+      DOW: number
+    ) => void
+  ): JSX.Element[] => {
+    let datas: Datas = {}
+    let boxs: JSX.Element[] = []
 
-  for (const sd of sds) {
-    datas[sd.workId] = []
-  }
-  for (const sd of sds) {
-    datas[sd.workId].push(sd.serviceId)
-  }
-
-  for (const key in datas) {
-    const wk = wks.find((wk) => wk.id === parseInt(key))
-    const logos = makeLogos(datas[key], svs)
-    if (wk.flag && logos.length !== 0) {
-      boxs.push(
-        <ScheduleBox key={key}>
-          <span>{wk.name}</span>
-          <div>{logos}</div>
-        </ScheduleBox>
-      )
+    for (const sd of sds) {
+      datas[sd.workId] = []
     }
+    for (const sd of sds) {
+      datas[sd.workId].push(sd.serviceId)
+    }
+
+    for (const key in datas) {
+      const wk = wks.find((wk) => wk.id === parseInt(key))
+      const logos = makeLogos(datas[key], svs)
+      if (wk.flag && logos.length !== 0) {
+        boxs.push(
+          <ScheduleBox key={key} onClick={(e) => showDitail(e, wk.id, DOW)}>
+            <span>{wk.name}</span>
+            <div>{logos}</div>
+          </ScheduleBox>
+        )
+      }
+    }
+
+    return boxs
   }
 
-  return boxs
-}
-
-export default ({ dayStr, dayNum, sds }: WODProps) => {
   return (
-    <C>
-      {({ wks, svs }) => (
-        <Wrapper isToday={getIsToday(dayNum)}>
-          <DayWrapper>
-            <div>{dayStr}</div>
-            <div>{dayNum}</div>
-          </DayWrapper>
-          <Divider />
-          <GridContainer>{makeSceduleBoxs(sds, wks, svs)}</GridContainer>
-        </Wrapper>
-      )}
-    </C>
+    <Wrapper isToday={getIsToday(dayNum)}>
+      <DayWrapper>
+        <div>{dayStr}</div>
+        <div>{dayNum}</div>
+      </DayWrapper>
+      <Divider />
+      <GridContainer>
+        <C>
+          {({ wks, svs, showDitail }) =>
+            makeSceduleBoxs(sds, wks, svs, showDitail)
+          }
+        </C>
+      </GridContainer>
+    </Wrapper>
   )
 }
 

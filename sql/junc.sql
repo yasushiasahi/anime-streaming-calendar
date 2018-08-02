@@ -16,7 +16,7 @@ select
 	services.id as services_id,
 	services.name as service_name,
 	schedules.day_of_week,
-	schedules.url as schedules_url
+	schedules.url as schedules_urlw
 from works
 left join schedules ON works.id = schedules.work_id
 left join services ON schedules.service_id = services.id
